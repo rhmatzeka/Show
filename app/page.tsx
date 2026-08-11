@@ -53,14 +53,16 @@ export default function HomePage() {
     if (projects.length > 0 && scrollContainerRef.current) {
       const container = scrollContainerRef.current;
       const adjustScroll = () => {
-        const scrollHeight = container.scrollHeight;
-        if (scrollHeight > 0) {
-          container.scrollTop = scrollHeight / 3;
+        const setElements = container.querySelectorAll(".portfolio-set-row");
+        if (setElements.length >= 3) {
+          const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
+          const spacerHeight = 112; // h-28 = 112px
+          container.scrollTop = spacerHeight + singleSetHeight;
         }
       };
       adjustScroll();
       // Double check after a small delay to handle image sizes setting in
-      const timer = setTimeout(adjustScroll, 150);
+      const timer = setTimeout(adjustScroll, 200);
       return () => clearTimeout(timer);
     }
   }, [projects]);
@@ -71,16 +73,18 @@ export default function HomePage() {
     if (!container || isDetailOpen || showInfo) return;
 
     const scrollTop = container.scrollTop;
-    const scrollHeight = container.scrollHeight;
+    const setElements = container.querySelectorAll(".portfolio-set-row");
+    if (setElements.length < 3) return;
 
-    const singleSetHeight = scrollHeight / 3;
+    const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
+    const spacerHeight = 112; // h-28 = 112px
 
     // Boundary check for scrolling down: when crossing into the 3rd set, teleport back to the 2nd set
-    if (scrollTop >= singleSetHeight * 2) {
+    if (scrollTop >= spacerHeight + singleSetHeight * 2) {
       container.scrollTop = scrollTop - singleSetHeight;
     }
     // Boundary check for scrolling up: when crossing into the 1st set, teleport down to the 2nd set
-    else if (scrollTop <= singleSetHeight) {
+    else if (scrollTop <= spacerHeight + singleSetHeight - 150) {
       container.scrollTop = scrollTop + singleSetHeight;
     }
   };
@@ -275,11 +279,6 @@ export default function HomePage() {
             </svg>
           </div>
 
-          {/* Column 1 Text: Version MM25.1.1 */}
-          <div className="font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest text-black/80 select-text py-4 md:py-8">
-            <span className="text-black">MM25.1.1</span>
-          </div>
-
           {/* Item 5: Einstoffen project */}
           {(() => {
             const project = projects.find(p => p.slug === "einstoffen");
@@ -366,11 +365,6 @@ export default function HomePage() {
             );
           })()}
 
-          {/* Column 2 Text: Brand Identity label */}
-          <div className="font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest leading-snug text-black/80 select-text py-4">
-            Brand Identity &<br />Visual Communication
-          </div>
-
           {/* Item 6: Coleção project */}
           {(() => {
             const project = projects.find(p => p.slug === "colecao");
@@ -424,11 +418,6 @@ export default function HomePage() {
             <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
               014
             </div>
-          </div>
-
-          {/* Column 3 Text: Bio */}
-          <div className="max-w-[200px] md:max-w-xs font-sans font-bold text-[10px] md:text-xs leading-relaxed text-black select-text py-4">
-            Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
           </div>
 
           {/* Item 7: AB Arca logo project */}
@@ -564,9 +553,14 @@ export default function HomePage() {
             onClick={() => {
               setIsDetailOpen(false);
               setShowInfo(false);
-              if (scrollContainerRef.current) {
-                const scrollHeight = scrollContainerRef.current.scrollHeight;
-                scrollContainerRef.current.scrollTo({ top: scrollHeight / 3, behavior: "smooth" });
+              const container = scrollContainerRef.current;
+              if (container) {
+                const setElements = container.querySelectorAll(".portfolio-set-row");
+                if (setElements.length >= 3) {
+                  const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
+                  const spacerHeight = 112; // h-28 = 112px
+                  container.scrollTo({ top: spacerHeight + singleSetHeight, behavior: "smooth" });
+                }
               }
             }} 
             className="hover:underline hover:opacity-75 transition-opacity"
@@ -583,9 +577,14 @@ export default function HomePage() {
             onClick={() => {
               setIsDetailOpen(false);
               setShowInfo(false);
-              if (scrollContainerRef.current) {
-                const scrollHeight = scrollContainerRef.current.scrollHeight;
-                scrollContainerRef.current.scrollTo({ top: scrollHeight / 3 + 200, behavior: "smooth" });
+              const container = scrollContainerRef.current;
+              if (container) {
+                const setElements = container.querySelectorAll(".portfolio-set-row");
+                if (setElements.length >= 3) {
+                  const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
+                  const spacerHeight = 112; // h-28 = 112px
+                  container.scrollTo({ top: spacerHeight + singleSetHeight + 200, behavior: "smooth" });
+                }
               }
             }} 
             className="hover:underline hover:opacity-75 transition-opacity"
@@ -613,6 +612,22 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Stationary version indicator */}
+        <div className="absolute left-[150px] md:left-[190px] top-[44vh] font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest text-black">
+          <span className="opacity-40">Version</span>
+          <span className="ml-8 text-black">MM25.1.1</span>
+        </div>
+        
+        {/* Stationary brand identity label */}
+        <div className="absolute left-[150px] md:left-[190px] top-[48vh] font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest leading-snug text-black">
+          Brand Identity &<br />Visual Communication
+        </div>
+
+        {/* Stationary bio text block */}
+        <div className="absolute right-6 md:right-16 top-[55vh] max-w-[240px] md:max-w-xs font-sans font-bold text-[10px] md:text-xs leading-relaxed text-black select-text pointer-events-auto">
+          Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
+        </div>
+
         {/* Copyright notice in background */}
         <div className="absolute right-6 md:right-16 bottom-8 font-sans font-bold text-xs uppercase tracking-wider text-black">
           © MM26
@@ -628,25 +643,31 @@ export default function HomePage() {
         <main
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="w-full h-full overflow-y-auto overflow-x-hidden relative z-10"
+          className="w-full h-full overflow-y-auto overflow-x-hidden scrollbar-none relative z-10"
         >
           {/* Flex column wrapper containing 3 duplicated sets of grid content to loop infinitely */}
           <div ref={contentRef} className="flex flex-col">
             
+            {/* Top Spacer */}
+            <div className="h-28 w-full flex-shrink-0" />
+
             {/* Set 1 (Top) */}
-            <div className="max-w-[1440px] mx-auto pt-28 pb-4 w-full">
+            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full">
               {renderCardsSet(1)}
             </div>
 
             {/* Set 2 (Middle - Center target on mount) */}
-            <div className="max-w-[1440px] mx-auto py-4 w-full">
+            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full">
               {renderCardsSet(2)}
             </div>
 
             {/* Set 3 (Bottom) */}
-            <div className="max-w-[1440px] mx-auto pt-4 pb-32 w-full">
+            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full">
               {renderCardsSet(3)}
             </div>
+
+            {/* Bottom Spacer */}
+            <div className="h-28 w-full flex-shrink-0" />
 
           </div>
         </main>
