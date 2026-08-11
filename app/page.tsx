@@ -37,11 +37,12 @@ export default function HomePage() {
         const res = await fetch("/api/projects");
         const data = await res.json();
         if (data.projects) {
-          // Keep all cards fully visible but reveal blocks covered initially
+          // Hide actual card contents to keep them invisible initially
+          gsap.set(".project-card-interactive > div", { opacity: 0 });
           setProjects(data.projects);
           
-          // Animate the black block covers sliding down to reveal the image/card underneath
           setTimeout(() => {
+            // 1. Black blocks slide up to cover the card area
             gsap.fromTo(
               ".project-card-reveal-block",
               { scaleY: 0, transformOrigin: "bottom" },
@@ -55,7 +56,10 @@ export default function HomePage() {
                 },
                 ease: "power3.out",
                 onComplete: () => {
-                  // After covering, slide down to reveal the actual images
+                  // Make actual card contents visible while covered by the blocks
+                  gsap.set(".project-card-interactive > div", { opacity: 1 });
+                  
+                  // 2. Black blocks slide down to reveal the images
                   gsap.to(
                     ".project-card-reveal-block",
                     {
