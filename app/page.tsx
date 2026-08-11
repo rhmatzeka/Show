@@ -15,25 +15,8 @@ export default function HomePage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
-  // Canvas movement state
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startY = useRef(0);
-  
-  // Current translation offsets
-  const [translateX, setTranslateX] = useState(-300);
-  const [translateY, setTranslateY] = useState(-200);
-  const posX = useRef(-300);
-  const posY = useRef(-200);
-  
-  // Velocity for inertia
-  const velX = useRef(0);
-  const velY = useRef(0);
-  const lastTime = useRef(0);
-  const lastX = useRef(0);
-  const lastY = useRef(0);
-  const animationFrameId = useRef<number | null>(null);
+  // Main scrollable container reference
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Card items refs for GSAP animations
   const projectRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -63,129 +46,6 @@ export default function HomePage() {
     }
     loadProjects();
   }, []);
-
-  // Infinite canvas physics loop (requestAnimationFrame) for inertia
-  useEffect(() => {
-    const updatePhysics = () => {
-      if (!isDragging.current && (Math.abs(velX.current) > 0.05 || Math.abs(velY.current) > 0.05)) {
-        // Apply friction
-        velX.current *= 0.94;
-        velY.current *= 0.94;
-
-        // Apply translation
-        posX.current += velX.current;
-        posY.current += velY.current;
-
-        setTranslateX(posX.current);
-        setTranslateY(posY.current);
-      }
-
-      animationFrameId.current = requestAnimationFrame(updatePhysics);
-    };
-
-    animationFrameId.current = requestAnimationFrame(updatePhysics);
-
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
-  }, []);
-
-  // Trackpad / Mouse wheel scroll handler to pan the canvas
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (isDetailOpen || showInfo) return;
-      e.preventDefault();
-
-      // Update positions
-      posX.current -= e.deltaX * 0.55;
-      posY.current -= e.deltaY * 0.55;
-
-      setTranslateX(posX.current);
-      setTranslateY(posY.current);
-
-      // Add temporary velocity so inertia takes over slightly when scrolling stops
-      velX.current = -e.deltaX * 0.12;
-      velY.current = -e.deltaY * 0.12;
-    };
-
-    const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.addEventListener("wheel", handleWheel, { passive: false });
-    }
-
-    return () => {
-      if (canvas) {
-        canvas.removeEventListener("wheel", handleWheel);
-      }
-    };
-  }, [isDetailOpen, showInfo]);
-
-  // Pointer event handlers (Mouse and Touch)
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (isDetailOpen || showInfo) return; // Disable canvas pan when detail/info is open
-    
-    // Check if clicked an interactive element
-    const target = e.target as HTMLElement;
-    if (target.closest("button") || target.closest(".project-card-interactive") || target.closest("a")) return;
-
-    isDragging.current = true;
-    startX.current = e.clientX - posX.current;
-    startY.current = e.clientY - posY.current;
-    
-    lastX.current = e.clientX;
-    lastY.current = e.clientY;
-    lastTime.current = Date.now();
-    velX.current = 0;
-    velY.current = 0;
-    
-    if (canvasRef.current) {
-      canvasRef.current.setPointerCapture(e.pointerId);
-    }
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging.current) return;
-
-    const x = e.clientX;
-    const y = e.clientY;
-    const now = Date.now();
-    const dt = now - lastTime.current;
-
-    // Calculate instantaneous velocity
-    if (dt > 0) {
-      const instantVelX = (x - lastX.current);
-      const instantVelY = (y - lastY.current);
-      velX.current = velX.current * 0.25 + instantVelX * 0.75;
-      velY.current = velY.current * 0.25 + instantVelY * 0.75;
-    }
-
-    posX.current = x - startX.current;
-    posY.current = y - startY.current;
-
-    setTranslateX(posX.current);
-    setTranslateY(posY.current);
-
-    lastX.current = x;
-    lastY.current = y;
-    lastTime.current = now;
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDragging.current) return;
-    isDragging.current = false;
-    
-    // If pointer up happened but the drag duration was long without moving, reset velocity
-    if (Date.now() - lastTime.current > 100) {
-      velX.current = 0;
-      velY.current = 0;
-    }
-
-    if (canvasRef.current) {
-      canvasRef.current.releasePointerCapture(e.pointerId);
-    }
-  };
 
   // Open project detail with FLIP transition
   const openProject = (project: ProjectData, itemId: string) => {
@@ -265,7 +125,7 @@ export default function HomePage() {
       ease: "power2.in",
       onComplete: () => {
         // Locate where the card is currently rendered on screen
-        const matchedItem = canvasItems.find(item => item.type === "project" && item.slug === activeProject.slug);
+        const matchedItem = scrollItems.find(item => item.type === "project" && item.slug === activeProject.slug);
         const itemId = matchedItem ? matchedItem.id : "";
         const cardEl = matchedItem ? projectRefs.current[matchedItem.id] : null;
         
@@ -372,122 +232,20 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isDetailOpen, showInfo, activeProject]);
 
-  // Virtual Canvas dimensions for infinite wrapping boundaries
-  const canvasWidth = 2000;
-  const canvasHeight = 1200;
-
-  // Modulo-based Wrapping function to achieve a smooth 360-degree panning layout
-  const getWrappedPosition = (baseX: number, baseY: number, itemWidth: number, itemHeight: number) => {
-    // Wrap screen position in boundaries [-itemWidth, canvasWidth - itemWidth]
-    const screenX = ((baseX + translateX + itemWidth) % canvasWidth + canvasWidth) % canvasWidth - itemWidth;
-    const screenY = ((baseY + translateY + itemHeight) % canvasHeight + canvasHeight) % canvasHeight - itemHeight;
-
-    // Convert back to canvas-relative coordinates since the container itself is translated
-    return {
-      left: screenX - translateX,
-      top: screenY - translateY
-    };
-  };
-
-  // Define layout items: sized correctly to match Image 2
-  const canvasItems = [
-    // Column 1
-    {
-      id: "item-einstoffen",
-      type: "project" as const,
-      slug: "einstoffen",
-      left: 100,
-      top: 150,
-      width: 320,
-      height: 200
-    },
-    {
-      id: "item-logo-three-pronged",
-      type: "text" as const,
-      left: 100,
-      top: 700,
-      width: 250,
-      height: 220,
-      content: (
-        <div className="w-full h-full bg-[#FFFFFF] border border-black p-6 flex flex-col justify-end items-start relative select-text">
-          {/* A cool brutalist custom logo / three prongs */}
-          <div className="flex flex-col gap-1.5 items-start w-20">
-            <div className="h-2 w-16 bg-black"></div>
-            <div className="h-2 w-20 bg-black"></div>
-            <div className="h-2 w-10 bg-black"></div>
-          </div>
-        </div>
-      )
-    },
-    // Column 2
-    {
-      id: "item-colecao",
-      type: "project" as const,
-      slug: "colecao",
-      left: 480,
-      top: 180,
-      width: 300,
-      height: 400
-    },
-    {
-      id: "item-rampant",
-      type: "project" as const,
-      slug: "rampant-studio",
-      left: 480,
-      top: 720,
-      width: 300,
-      height: 400
-    },
-    // Column 3
-    {
-      id: "item-arca-logo",
-      type: "project" as const,
-      slug: "ab-arca",
-      left: 840,
-      top: 130,
-      width: 320,
-      height: 220
-    },
-    {
-      id: "item-alphabet",
-      type: "text" as const,
-      left: 840,
-      top: 720,
-      width: 300,
-      height: 250,
-      content: (
-        <div className="w-full h-full bg-[#000000] p-6 flex flex-col justify-center items-start border border-black">
-          <div className="font-display font-black text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
-            ABCDEFGHIKL<br />
-            MNÑOPQRSTUV<br />
-            WXYZ
-          </div>
-        </div>
-      )
-    },
-    // Column 4
-    {
-      id: "item-macbeth",
-      type: "project" as const,
-      slug: "macbeth",
-      left: 1200,
-      top: 160,
-      width: 300,
-      height: 420
-    },
-    {
-      id: "item-brand-identity-mm26",
-      type: "project" as const,
-      slug: "brand-identity-mm26",
-      left: 1200,
-      top: 720,
-      width: 300,
-      height: 200
-    }
+  // Define layout items for left/right columns
+  const scrollItems = [
+    { id: "item-einstoffen", type: "project" as const, slug: "einstoffen" },
+    { id: "item-logo-three-pronged", type: "text" as const },
+    { id: "item-rampant", type: "project" as const, slug: "rampant-studio" },
+    { id: "item-colecao", type: "project" as const, slug: "colecao" },
+    { id: "item-arca-logo", type: "project" as const, slug: "ab-arca" },
+    { id: "item-alphabet", type: "text" as const },
+    { id: "item-macbeth", type: "project" as const, slug: "macbeth" },
+    { id: "item-brand-identity-mm26", type: "project" as const, slug: "brand-identity-mm26" }
   ];
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-white select-none">
+    <div className="w-screen h-screen overflow-hidden relative bg-white select-none">
       {/* 1. Minimal Header (TRANSPARENT background to let cards go underneath) */}
       <header className="fixed top-0 left-0 right-0 h-16 flex justify-between items-center px-6 md:px-12 bg-transparent z-40">
         <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2">
@@ -498,13 +256,9 @@ export default function HomePage() {
             onClick={() => {
               setIsDetailOpen(false);
               setShowInfo(false);
-              // Reset canvas back to original coordinate
-              posX.current = -300;
-              posY.current = -200;
-              setTranslateX(-300);
-              setTranslateY(-200);
-              velX.current = 0;
-              velY.current = 0;
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+              }
             }} 
             className="hover:underline hover:opacity-75 transition-opacity"
           >
@@ -518,15 +272,11 @@ export default function HomePage() {
           </button>
           <button 
             onClick={() => {
-              // Focus / pan to the center of the first project
               setIsDetailOpen(false);
               setShowInfo(false);
-              posX.current = -100;
-              posY.current = -150;
-              setTranslateX(-100);
-              setTranslateY(-150);
-              velX.current = 0;
-              velY.current = 0;
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.scrollTo({ top: 300, behavior: "smooth" });
+              }
             }} 
             className="hover:underline hover:opacity-75 transition-opacity"
           >
@@ -535,7 +285,7 @@ export default function HomePage() {
         </nav>
       </header>
 
-      {/* 2. STATIONARY / FIXED BACKGROUND TEXT LAYER (Behind the draggable canvas, z-0) */}
+      {/* 2. STATIONARY / FIXED BACKGROUND TEXT LAYER (Behind the scrolling canvas, z-0) */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         
         {/* Desktop Vertical BRIGANTI banner on the left background */}
@@ -554,97 +304,57 @@ export default function HomePage() {
         </div>
 
         {/* Stationary version indicator */}
-        <div className="absolute left-28 top-[50vh] font-sans font-bold text-xs uppercase tracking-widest text-black">
+        <div className="absolute left-28 md:left-32 top-[45vh] font-sans font-bold text-xs uppercase tracking-widest text-black">
           <span className="opacity-40">Version</span>
           <span className="ml-8 text-black">MM25.1.1</span>
         </div>
         
         {/* Stationary brand identity label */}
-        <div className="absolute left-28 top-[55vh] font-sans font-bold text-xs uppercase tracking-widest leading-snug text-black">
+        <div className="absolute left-28 md:left-32 top-[50vh] font-sans font-bold text-xs uppercase tracking-widest leading-snug text-black">
           Brand Identity &<br />Visual Communication
         </div>
 
         {/* Stationary bio text block */}
-        <div className="absolute left-[840px] top-[50vh] max-w-sm font-sans font-bold text-xs leading-relaxed text-black select-text pointer-events-auto">
+        <div className="absolute right-6 md:right-16 top-[55vh] max-w-xs md:max-w-sm font-sans font-bold text-xs leading-relaxed text-black select-text pointer-events-auto">
           Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
         </div>
 
         {/* Copyright notice in background */}
-        <div className="absolute right-16 bottom-8 font-sans font-bold text-xs uppercase tracking-wider text-black">
+        <div className="absolute right-6 md:right-16 bottom-8 font-sans font-bold text-xs uppercase tracking-wider text-black">
           © MM26
         </div>
       </div>
 
-      {/* 3. Infinite Panning Canvas (z-10, draws OVER the background text, UNDER the header text) */}
+      {/* 3. NATIVE VERTICAL SCROLL CANVAS (z-10, draws OVER the background text, UNDER the header text) */}
       {loading ? (
         <div className="w-full h-full flex justify-center items-center font-sans font-bold text-xl uppercase tracking-widest bg-white z-10">
           Loading Portfolio...
         </div>
       ) : (
         <main
-          ref={canvasRef}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          className="w-full h-full relative z-10"
-          style={{ touchAction: "none" }}
+          ref={scrollContainerRef}
+          className="w-full h-full overflow-y-auto overflow-x-hidden scroll-smooth relative z-10"
         >
-          <div
-            className="absolute top-0 left-0 w-[4000px] h-[3000px] bg-transparent cursor-grab active:cursor-grabbing"
-            style={{
-              transform: `translate3d(${translateX}px, ${translateY}px, 0)`,
-              transition: isDragging.current ? "none" : "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-              willChange: "transform"
-            }}
-          >
-            {canvasItems.map((item) => {
-              // Get wrapped coordinate of this card
-              const pos = getWrappedPosition(item.left, item.top, item.width, item.height);
+          {/* Responsive two-column grid on desktop, single-column on mobile */}
+          <div className="max-w-6xl mx-auto px-6 md:px-12 pt-28 pb-32 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 pl-24 md:pl-32">
+            
+            {/* LEFT COLUMN */}
+            <div className="flex flex-col gap-16 md:gap-24">
+              
+              {/* Item 1: Einstoffen project */}
+              {(() => {
+                const project = projects.find(p => p.slug === "einstoffen");
+                if (!project) return null;
+                const coverImg = project.images.find(img => img.isCover) || project.images[0];
+                const isHidden = hiddenCardId === "item-einstoffen";
 
-              if (item.type === "text") {
                 return (
                   <div
-                    key={item.id}
-                    className="absolute"
-                    style={{
-                      left: pos.left,
-                      top: pos.top,
-                      width: item.width,
-                      height: item.height,
-                    }}
+                    ref={(el) => { projectRefs.current["item-einstoffen"] = el; }}
+                    onClick={() => openProject(project, "item-einstoffen")}
+                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[16/10]"
                   >
-                    {item.content}
-                  </div>
-                );
-              }
-
-              // Project rendering
-              const project = projects.find((p) => p.slug === item.slug);
-              if (!project) return null;
-
-              const coverImg = project.images.find(img => img.isCover) || project.images[0];
-              const isHidden = hiddenCardId === item.id;
-
-              return (
-                <div
-                  key={item.id}
-                  ref={(el) => {
-                    projectRefs.current[item.id] = el;
-                  }}
-                  onClick={() => openProject(project, item.id)}
-                  className="absolute border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors"
-                  style={{
-                    left: pos.left,
-                    top: pos.top,
-                    width: item.width,
-                    height: item.height,
-                  }}
-                >
-                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                    
-                    {/* Custom project card styling matching visual screenshots */}
-                    {project.slug === "einstoffen" ? (
-                      // Einstoffen custom split visual
+                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                       <div className="w-full h-full flex items-stretch flip-source-el">
                         <div className="w-[55%] relative overflow-hidden bg-black/5 border-r border-black">
                           {coverImg && (
@@ -652,39 +362,106 @@ export default function HomePage() {
                               src={coverImg.url}
                               alt={project.title}
                               fill
-                              sizes="300px"
+                              sizes="(max-width: 768px) 100vw, 500px"
                               className="object-cover grayscale contrast-125 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                             />
                           )}
                           <div className="absolute bottom-4 left-0 right-0 text-center z-10">
-                            <span className="font-display font-black text-white text-xl tracking-wider uppercase">
+                            <span className="font-display font-black text-white text-xl md:text-2xl tracking-wider uppercase">
                               EINSTOFFEN
                             </span>
                           </div>
                         </div>
                         <div className="w-[45%] bg-[#0B0B0B] p-4 flex flex-col justify-between items-end">
-                          {/* Top right icon */}
                           <div className="w-6 h-6 border border-white/20 rounded-sm flex items-center justify-center text-white/55 text-[10px] font-bold">
                             R
                           </div>
                           <span className="text-[10px] text-white/30 font-mono">03:04</span>
                         </div>
                       </div>
-                    ) : project.slug === "colecao" ? (
-                      // Coleção cover visual with font overlay
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Item 2: Three-pronged logo card */}
+              <div
+                className="w-full aspect-square bg-[#FFFFFF] border border-black p-8 flex flex-col justify-end items-start relative select-text"
+              >
+                <div className="flex flex-col gap-1.5 items-start w-20">
+                  <div className="h-2.5 w-16 bg-black"></div>
+                  <div className="h-2.5 w-20 bg-black"></div>
+                  <div className="h-2.5 w-10 bg-black"></div>
+                </div>
+              </div>
+
+              {/* Item 3: Rampant project */}
+              {(() => {
+                const project = projects.find(p => p.slug === "rampant-studio");
+                if (!project) return null;
+                const coverImg = project.images.find(img => img.isCover) || project.images[0];
+                const isHidden = hiddenCardId === "item-rampant";
+
+                return (
+                  <div
+                    ref={(el) => { projectRefs.current["item-rampant"] = el; }}
+                    onClick={() => openProject(project, "item-rampant")}
+                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                  >
+                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                      <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
+                        {coverImg && (
+                          <Image
+                            src={coverImg.url}
+                            alt={project.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 500px"
+                            className="object-cover grayscale contrast-125 mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-[#E64A19]/30 pointer-events-none mix-blend-color"></div>
+                        <div className="absolute bottom-6 left-6 z-10">
+                          <h3 className="font-sans font-bold italic text-3xl text-white tracking-wide">
+                            Rampant
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+            </div>
+
+            {/* RIGHT COLUMN (Shifted down relative to left column to create masonry pattern) */}
+            <div className="flex flex-col gap-16 md:gap-24 md:pt-32">
+              
+              {/* Item 4: Coleção project */}
+              {(() => {
+                const project = projects.find(p => p.slug === "colecao");
+                if (!project) return null;
+                const coverImg = project.images.find(img => img.isCover) || project.images[0];
+                const isHidden = hiddenCardId === "item-colecao";
+
+                return (
+                  <div
+                    ref={(el) => { projectRefs.current["item-colecao"] = el; }}
+                    onClick={() => openProject(project, "item-colecao")}
+                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                  >
+                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                       <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
                         {coverImg && (
                           <Image
                             src={coverImg.url}
                             alt={project.title}
                             fill
-                            sizes="300px"
+                            sizes="(max-width: 768px) 100vw, 500px"
                             className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                           />
                         )}
-                        {/* Outlined OLEÇÃO font overlay */}
-                        <div className="absolute top-10 left-0 right-0 flex flex-col items-center justify-start z-10 pointer-events-none select-none">
-                          <span className="text-[8px] font-bold text-black uppercase tracking-[0.2em] mb-1.5">
+                        <div className="absolute top-8 left-0 right-0 flex flex-col items-center justify-start z-10 pointer-events-none select-none">
+                          <span className="text-[8px] font-bold text-black uppercase tracking-[0.2em] mb-1">
                             AB &nbsp; &nbsp; &nbsp; SETIMA &nbsp; &nbsp; &nbsp; AB &nbsp; &nbsp; &nbsp; SETIMA
                           </span>
                           <h3 className="font-display font-black text-6xl tracking-tight leading-none text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
@@ -692,16 +469,31 @@ export default function HomePage() {
                           </h3>
                         </div>
                       </div>
-                    ) : project.slug === "ab-arca" ? (
-                      // AB Arca Logo card representation
-                      <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-5 flip-source-el">
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Item 5: AB Arca logo project */}
+              {(() => {
+                const project = projects.find(p => p.slug === "ab-arca");
+                if (!project) return null;
+                const isHidden = hiddenCardId === "item-arca-logo";
+
+                return (
+                  <div
+                    ref={(el) => { projectRefs.current["item-arca-logo"] = el; }}
+                    onClick={() => openProject(project, "item-arca-logo")}
+                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3]"
+                  >
+                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                      <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
                         <div className="flex justify-between items-start">
                           <span className="text-[10px] font-bold text-white/50">AB</span>
                           <span className="text-[10px] font-bold text-white/50">ARCA</span>
                         </div>
-                        {/* Custom vector SVG symbol */}
                         <div className="my-auto flex justify-center items-center">
-                          <svg className="w-20 h-20 text-[#D4E157]" viewBox="0 0 100 100" fill="currentColor">
+                          <svg className="w-16 h-16 text-[#D4E157]" viewBox="0 0 100 100" fill="currentColor">
                             <path d="M20 20 h35 a25 25 0 0 1 0 50 h-10 l15 20 h-20 l-13 -20 h-7 v20 h-15 z M35 35 v18 h15 a9 9 0 0 0 0 -18 z" />
                           </svg>
                         </div>
@@ -710,11 +502,38 @@ export default function HomePage() {
                           <span className="text-[9px] font-mono text-white/40">MM24</span>
                         </div>
                       </div>
-                    ) : project.slug === "macbeth" ? (
-                      // Macbeth poster representation
-                      <div className="w-full h-full bg-white flex flex-col justify-between p-8 flip-source-el border border-black">
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Item 6: Alphabet poster card */}
+              <div
+                className="w-full aspect-square bg-[#000000] p-6 flex flex-col justify-center items-start border border-black"
+              >
+                <div className="font-display font-black text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+                  ABCDEFGHIKL<br />
+                  MNÑOPQRSTUV<br />
+                  WXYZ
+                </div>
+              </div>
+
+              {/* Item 7: Macbeth project */}
+              {(() => {
+                const project = projects.find(p => p.slug === "macbeth");
+                if (!project) return null;
+                const isHidden = hiddenCardId === "item-macbeth";
+
+                return (
+                  <div
+                    ref={(el) => { projectRefs.current["item-macbeth"] = el; }}
+                    onClick={() => openProject(project, "item-macbeth")}
+                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                  >
+                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                      <div className="w-full h-full bg-white flex flex-col justify-between p-6 flip-source-el border border-black">
                         <div>
-                          <span className="font-display font-black text-[9px] text-red-600 uppercase tracking-widest block mb-2.5 leading-none">
+                          <span className="font-display font-black text-[9px] text-red-600 uppercase tracking-widest block mb-2 leading-none">
                             THE TRAGEDY OF
                           </span>
                           <h4 className="font-sans font-black text-3xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
@@ -731,92 +550,51 @@ export default function HomePage() {
                           <span className="font-sans font-black text-xl text-black block uppercase leading-none tracking-tighter">
                             SHAKESPEARE
                           </span>
-                          <span className="font-sans font-bold text-[8px] text-black/60 uppercase mt-3 block">
+                          <span className="font-sans font-bold text-[8px] text-black/60 uppercase mt-2 block">
                             NATIONAL THEATER
                           </span>
                         </div>
                       </div>
-                    ) : project.slug === "rampant-studio" ? (
-                      // Rampant Studio red multiply photo representation
-                      <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
-                        {coverImg && (
-                          <Image
-                            src={coverImg.url}
-                            alt={project.title}
-                            fill
-                            sizes="300px"
-                            className="object-cover grayscale contrast-125 mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                          />
-                        )}
-                        {/* Red background overlay to enforce styling */}
-                        <div className="absolute inset-0 bg-[#E64A19]/30 pointer-events-none mix-blend-color"></div>
-                        <div className="absolute bottom-8 left-8 z-10">
-                          <h3 className="font-sans font-bold italic text-4xl text-white tracking-wide">
-                            Rampant
-                          </h3>
-                        </div>
-                      </div>
-                    ) : project.slug === "brand-identity-mm26" ? (
-                      // Brand Identity MM26 horizontal stripes emblem
-                      <div className="w-full h-full bg-white flex flex-col justify-between p-8 flip-source-el">
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Item 8: Brand Identity MM26 project */}
+              {(() => {
+                const project = projects.find(p => p.slug === "brand-identity-mm26");
+                if (!project) return null;
+                const isHidden = hiddenCardId === "item-brand-identity-mm26";
+
+                return (
+                  <div
+                    ref={(el) => { projectRefs.current["item-brand-identity-mm26"] = el; }}
+                    onClick={() => openProject(project, "item-brand-identity-mm26")}
+                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/2]"
+                  >
+                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                      <div className="w-full h-full bg-white flex flex-col justify-between p-6 flip-source-el">
                         <div className="flex justify-between items-start">
                           <span className="text-[10px] font-bold text-black/60 uppercase">IDENTITY</span>
                           <span className="text-[10px] font-bold text-black/60 uppercase">MM26</span>
                         </div>
-                        {/* Brutalist horizontal black stripes logo */}
-                        <div className="flex flex-col gap-4.5 w-full items-stretch">
-                          <div className="h-4 bg-black"></div>
-                          <div className="h-4 bg-black"></div>
-                          <div className="h-4 bg-black"></div>
+                        <div className="flex flex-col gap-3.5 w-full items-stretch">
+                          <div className="h-3 bg-black"></div>
+                          <div className="h-3 bg-black"></div>
+                          <div className="h-3 bg-black"></div>
                         </div>
                         <div className="flex justify-between items-end">
-                          <span className="text-[9px] font-mono text-black/40">BRAND SYSTEM</span>
-                          <span className="text-[10px] font-sans font-black text-black">© BRIGANTI</span>
+                          <span className="text-[8px] font-mono text-black/40">BRAND SYSTEM</span>
+                          <span className="text-[9px] font-sans font-black text-black">© BRIGANTI</span>
                         </div>
-                      </div>
-                    ) : (
-                      // Default layout fallback
-                      <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
-                        {coverImg ? (
-                          <Image
-                            src={coverImg.url}
-                            alt={project.title}
-                            fill
-                            sizes="300px"
-                            className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-black/5 text-black/30 font-sans font-bold">
-                            NO IMAGE
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Brutalist overlay on hover */}
-                    <div className="portfolio-card-mask absolute inset-0 opacity-0 group-hover:opacity-100 flex flex-col justify-between p-6 z-20 pointer-events-none">
-                      <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-bold text-white uppercase tracking-widest border border-white px-2 py-0.5">
-                          {project.category.split(',')[0] || "Project"}
-                        </span>
-                        <span className="text-[10px] font-bold text-white uppercase">
-                          MM{project.year}
-                        </span>
-                      </div>
-
-                      <div className="text-left">
-                        <h3 className="text-2xl font-black text-white font-display uppercase tracking-tight leading-none mb-1.5">
-                          {project.title}
-                        </h3>
-                        <p className="text-[11px] text-white/70 font-sans">
-                          Click to View Details
-                        </p>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })()}
+
+            </div>
+
           </div>
         </main>
       )}
