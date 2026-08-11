@@ -93,7 +93,7 @@ export default function AdminLoginPage() {
         </form>
 
         <div className="mt-8 border-t border-black/10 pt-4 flex justify-between text-[10px] font-sans font-bold uppercase text-black/40">
-          <span>Andres Briganti CMS</span>
+              <span>Rahmat CMS</span>
           <a href="/" className="hover:underline text-black/60 hover:text-black">
             Back to Website
           </a>

@@ -15,7 +15,7 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Andres Briganti",
+  title: "Rahmat Eka",
   description: "Interactive Swiss Editorial Portfolio website",
 };
 

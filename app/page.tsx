@@ -549,7 +549,7 @@ export default function HomePage() {
                     </div>
                     <div className="flex justify-between items-end">
                       <span className="text-[7px] md:text-[8px] font-mono text-black/40">BRAND SYSTEM</span>
-                      <span className="text-[8px] md:text-[9px] font-sans font-black text-black">© BRIGANTI</span>
+                      <span className="text-[8px] md:text-[9px] font-sans font-black text-black">© RAHMAT</span>
                     </div>
                   </div>
                 </div>
@@ -664,15 +664,15 @@ export default function HomePage() {
         {/* Desktop Vertical BRIGANTI banner on the left background */}
         <div className="hidden md:block absolute top-0 left-0 bottom-0 w-32 overflow-hidden flex items-center">
           <div className="text-[25vh] font-black text-black tracking-tighter leading-none uppercase font-display sidebar-text-vertical select-none opacity-100">
-            BRIGANTI
+            RAHMAT
           </div>
         </div>
 
         {/* Mobile Bottom Stationary BRIGANTI marquee in background */}
         <div className="md:hidden absolute bottom-0 left-0 right-0 h-20 bg-white flex items-center overflow-hidden px-6">
           <div className="text-6xl font-black text-black whitespace-nowrap tracking-tighter uppercase font-display flex gap-8">
-            <span>BRIGANTI</span>
-            <span>BRIGANTI</span>
+            <span>RAHMAT</span>
+            <span>RAHMAT</span>
           </div>
         </div>
 
@@ -691,7 +691,7 @@ export default function HomePage() {
 
         {/* Stationary bio text block */}
         <div className="absolute right-6 md:right-16 top-[55vh] max-w-[240px] md:max-w-xs font-sans font-bold text-[10px] md:text-xs leading-relaxed text-black select-text pointer-events-auto">
-          {projects.find(p => p.slug === "alphabet-card")?.description || "Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands."}
+          {projects.find(p => p.slug === "alphabet-card")?.description || "Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust applications."}
         </div>
 
         {/* Copyright notice in background */}
@@ -889,7 +889,7 @@ export default function HomePage() {
 
             <div className="my-auto space-y-8 py-8">
               <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-medium">
-                Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
+                Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust applications.
               </p>
               
               <div className="space-y-4 font-sans text-sm">
@@ -899,11 +899,11 @@ export default function HomePage() {
                 </div>
                 <div className="grid grid-cols-3 border-b border-black/10 pb-2">
                   <span className="font-bold uppercase text-black/60">Services</span>
-                  <span className="col-span-2 font-medium">Brand Identity, Art Direction, Web Development, Type Design</span>
+                  <span className="col-span-2 font-medium">Brand Identity, Art Direction, Web Development, Fullstack Engineering</span>
                 </div>
                 <div className="grid grid-cols-3 border-b border-black/10 pb-2">
                   <span className="font-bold uppercase text-black/60">Contact</span>
-                  <span className="col-span-2 font-medium">hello@briganti.works</span>
+                  <span className="col-span-2 font-medium">matsganz@gmail.com</span>
                 </div>
               </div>
             </div>

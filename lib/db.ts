@@ -51,7 +51,7 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     slug: "symbol-card",
     category: "Brand Identity & Visual Communication",
     year: "MM25.1.1",
-    description: "The official brand symbol representing Andrés Briganti's design practice.",
+    description: "The official brand symbol representing Rahmat's design practice.",
     projectUrl: null,
     sortOrder: 1,
     images: []
@@ -75,7 +75,7 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     slug: "alphabet-card",
     category: "Typography & Display",
     year: "014",
-    description: "Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.",
+    description: "Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust applications.",
     projectUrl: null,
     sortOrder: 3,
     images: []
@@ -126,7 +126,7 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     category: "Type Design",
     year: "2024",
     description: "Arca is a modular typeface rooted in mid-century geometric explorations from the 50s and 60s. Its precisely squared letterforms come in lowercase, unicase, and uppercase variations, offering systematic typographic control. Built on a strict grid system, the font includes alternative glyphs that introduce subtle variations to headlines and logotypes. With extensive diacritic support spanning multiple languages, Arca commands attention at large scales—a typeface that honors historical grid-based design while functioning as a distinctive display option.",
-    projectUrl: "https://briganti.works/work/ab-arca",
+    projectUrl: "https://github.com/rhmatzeka",
     sortOrder: 7,
     images: [
       { id: "img-2a", url: "https://assets.basehub.com/467cc7ea/4d421afb9781e883ab8ae0d96cd7cdf2/2024.arca.td.02.04.png", isCover: true }
