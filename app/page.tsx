@@ -606,7 +606,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden relative bg-white select-none">
+    <div className="w-screen h-screen overflow-hidden relative bg-transparent select-none">
       {/* 1. Minimal Header (TRANSPARENT background to let cards go underneath) */}
       <header className="fixed top-0 left-0 right-0 h-16 flex justify-between items-center px-6 md:px-12 bg-transparent z-40">
         <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2">
@@ -659,7 +659,7 @@ export default function HomePage() {
       </header>
 
       {/* 2. STATIONARY / FIXED BACKGROUND TEXT LAYER (Behind the scrolling canvas, z-0) */}
-      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden bg-white">
         
         {/* Desktop Vertical BRIGANTI banner on the left background */}
         <div className="hidden md:block absolute top-[120px] left-0 bottom-0 w-32 overflow-hidden flex items-center">
@@ -669,8 +669,8 @@ export default function HomePage() {
         </div>
 
         {/* Mobile Bottom Stationary BRIGANTI marquee in background */}
-        <div className="md:hidden absolute bottom-4 left-0 right-0 h-20 bg-transparent flex items-center overflow-hidden px-6 z-0">
-          <div className="text-[12vh] font-black text-black/100 whitespace-nowrap tracking-tighter uppercase font-display flex gap-8 w-full justify-center opacity-100">
+        <div className="md:hidden absolute bottom-4 left-0 right-0 h-28 bg-transparent flex items-center overflow-hidden px-6 z-[1]">
+          <div className="text-[10vw] font-black text-black whitespace-nowrap tracking-tighter uppercase font-display flex gap-8 w-full justify-center">
             <span>RAHMAT</span>
           </div>
         </div>
@@ -708,7 +708,7 @@ export default function HomePage() {
         <main
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="w-full h-full overflow-y-auto overflow-x-hidden scrollbar-none relative z-10"
+          className="w-full h-full overflow-y-auto overflow-x-hidden scrollbar-none relative z-10 bg-transparent"
         >
           {/* Flex column wrapper containing 3 duplicated sets of grid content to loop infinitely */}
           <div ref={contentRef} className="flex flex-col">
@@ -717,17 +717,17 @@ export default function HomePage() {
             <div className="h-28 w-full flex-shrink-0" />
 
             {/* Set 1 (Top) */}
-            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full">
+            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full bg-transparent">
               {renderCardsSet(1)}
             </div>
 
             {/* Set 2 (Middle - Center target on mount) */}
-            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full">
+            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full bg-transparent">
               {renderCardsSet(2)}
             </div>
 
             {/* Set 3 (Bottom) */}
-            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full">
+            <div className="portfolio-set-row max-w-[1440px] mx-auto py-8 w-full bg-transparent">
               {renderCardsSet(3)}
             </div>
 
