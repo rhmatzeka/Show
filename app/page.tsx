@@ -669,9 +669,14 @@ export default function HomePage() {
         </div>
 
         {/* Mobile Bottom Stationary BRIGANTI marquee in background */}
-        <div className="md:hidden absolute bottom-4 left-0 right-0 h-28 bg-transparent flex items-center overflow-hidden px-6 z-[1]">
-          <div className="text-[10vw] font-black text-black whitespace-nowrap tracking-tighter uppercase font-display flex gap-8 w-full justify-center">
-            <span>RAHMAT</span>
+        <div className="md:hidden absolute bottom-0 left-0 right-0 h-24 bg-transparent flex items-end overflow-hidden px-4 z-[1]">
+          <div className="text-[17vw] font-black text-black whitespace-nowrap tracking-[0.15em] uppercase font-display flex w-full justify-between leading-none translate-y-2">
+            <span>R</span>
+            <span>A</span>
+            <span>H</span>
+            <span>M</span>
+            <span>A</span>
+            <span>T</span>
           </div>
         </div>
 
