@@ -44,16 +44,34 @@ export default function HomePage() {
           setTimeout(() => {
             gsap.fromTo(
               ".project-card-reveal-block",
-              { scaleY: 1 },
+              { scaleY: 0, transformOrigin: "bottom" },
               {
-                scaleY: 0,
-                duration: 1.4,
+                scaleY: 1,
+                duration: 1.0,
                 stagger: {
-                  amount: 0.9,
+                  amount: 0.6,
                   grid: "auto",
                   from: "start"
                 },
-                ease: "power4.inOut"
+                ease: "power3.out",
+                onComplete: () => {
+                  // After covering, slide down to reveal the actual images
+                  gsap.to(
+                    ".project-card-reveal-block",
+                    {
+                      scaleY: 0,
+                      transformOrigin: "bottom",
+                      duration: 1.2,
+                      delay: 0.1,
+                      stagger: {
+                        amount: 0.6,
+                        grid: "auto",
+                        from: "start"
+                      },
+                      ease: "power4.inOut"
+                    }
+                  );
+                }
               }
             );
           }, 300);
