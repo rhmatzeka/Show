@@ -242,7 +242,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] text-black pb-24 select-none">
+    <div className="min-h-screen bg-[#FDFDFD] text-black pb-24 select-none overflow-y-auto">
       {/* Admin Navbar (Responsive Wrap) */}
       <header className="sticky top-0 left-0 right-0 min-h-[5rem] py-4 border-b border-black flex flex-col sm:flex-row gap-4 justify-between items-center px-6 md:px-12 bg-white z-40">
         <div className="flex items-center gap-4">
@@ -275,7 +275,7 @@ export default function AdminDashboardPage() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Form (5 Cols) */}
         <section className="lg:col-span-5">
-          <div className="border border-black p-6 md:p-8 bg-white shadow-sm lg:sticky lg:top-28">
+          <div className="border border-black p-6 md:p-8 bg-white shadow-sm lg:sticky lg:top-28 max-h-[calc(100vh-9rem)] overflow-y-auto">
             <div className="border-b border-black pb-4 mb-6">
               <h2 className="text-xl font-black font-display uppercase tracking-tight flex items-center gap-2">
                 <Plus className="w-5 h-5" />
@@ -454,7 +454,7 @@ export default function AdminDashboardPage() {
 
         {/* Right Column: List of Projects (7 Cols) */}
         <section className="lg:col-span-7">
-          <div className="border border-black p-6 md:p-8 bg-white shadow-sm h-full">
+          <div className="border border-black p-6 md:p-8 bg-white shadow-sm min-h-[calc(100vh-12rem)]">
             <div className="border-b border-black pb-4 mb-6 flex justify-between items-end">
               <div>
                 <h2 className="text-xl font-black font-display uppercase tracking-tight">

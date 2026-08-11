@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${syne.variable}`}>
-      <body className="antialiased select-none bg-white text-black min-h-screen relative overflow-hidden">
+      <body className="antialiased select-none bg-white text-black min-h-screen relative">
         {children}
       </body>
     </html>
