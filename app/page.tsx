@@ -267,17 +267,49 @@ export default function HomePage() {
         {/* Column 1 */}
         <div className="flex flex-col gap-12 md:gap-24">
           {/* Item 1: Symbol Card */}
-          <div className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none">
-            {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
-            <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
-              <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
-              <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
-              <path d="M50 50 C50 20, 50 10, 50 5 C50 10, 50 20, 50 50 Z" stroke="currentColor" strokeWidth="4" />
-              <path d="M50 50 C45 30, 50 20, 55 10 C50 20, 50 30, 50 50 Z" />
-              <path d="M30 65 C40 60, 48 55, 50 50 C48 55, 40 60, 30 65 Z" stroke="currentColor" strokeWidth="3" />
-              <path d="M70 65 C60 60, 52 55, 50 50 C52 55, 60 60, 70 65 Z" stroke="currentColor" strokeWidth="3" />
-            </svg>
-          </div>
+          {(() => {
+            const project = projects.find(p => p.slug === "symbol-card");
+            const coverImg = project?.images?.find(img => img.isCover) || project?.images?.[0];
+            const itemId = `item-symbol-logo-${setId}`;
+            const isHidden = hiddenCardId === itemId;
+
+            if (project && coverImg) {
+              return (
+                <div
+                  key={itemId}
+                  ref={(el) => { projectRefs.current[itemId] = el; }}
+                  onClick={() => openProject(project, itemId)}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                      <Image
+                        src={coverImg.url}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={itemId} className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none">
+                {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
+                <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
+                  <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
+                  <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
+                  <path d="M50 50 C50 20, 50 10, 50 5 C50 10, 50 20, 50 50 Z" stroke="currentColor" strokeWidth="4" />
+                  <path d="M50 50 C45 30, 50 20, 55 10 C50 20, 50 30, 50 50 Z" />
+                  <path d="M30 65 C40 60, 48 55, 50 50 C48 55, 40 60, 30 65 Z" stroke="currentColor" strokeWidth="3" />
+                  <path d="M70 65 C60 60, 52 55, 50 50 C52 55, 60 60, 70 65 Z" stroke="currentColor" strokeWidth="3" />
+                </svg>
+              </div>
+            );
+          })()}
 
           {/* Item 5: Einstoffen project */}
           {(() => {
@@ -409,16 +441,48 @@ export default function HomePage() {
         {/* Column 3 */}
         <div className="flex flex-col gap-12 md:gap-24 pt-8 md:pt-16">
           {/* Item 3: Alphabet poster card */}
-          <div className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black">
-            <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
-              ABCDEFGHIKL<br />
-              MNÑOPQRSTUV<br />
-              WXYZ
-            </div>
-            <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
-              014
-            </div>
-          </div>
+          {(() => {
+            const project = projects.find(p => p.slug === "alphabet-card");
+            const coverImg = project?.images?.find(img => img.isCover) || project?.images?.[0];
+            const itemId = `item-alphabet-poster-${setId}`;
+            const isHidden = hiddenCardId === itemId;
+
+            if (project && coverImg) {
+              return (
+                <div
+                  key={itemId}
+                  ref={(el) => { projectRefs.current[itemId] = el; }}
+                  onClick={() => openProject(project, itemId)}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                      <Image
+                        src={coverImg.url}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={itemId} className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black">
+                <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+                  ABCDEFGHIKL<br />
+                  MNÑOPQRSTUV<br />
+                  WXYZ
+                </div>
+                <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
+                  014
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Item 7: AB Arca logo project */}
           {(() => {
@@ -615,17 +679,19 @@ export default function HomePage() {
         {/* Stationary version indicator */}
         <div className="absolute left-[150px] md:left-[190px] top-[44vh] font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest text-black">
           <span className="opacity-40">Version</span>
-          <span className="ml-8 text-black">MM25.1.1</span>
+          <span className="ml-8 text-black">
+            {projects.find(p => p.slug === "symbol-card")?.year || "MM25.1.1"}
+          </span>
         </div>
         
         {/* Stationary brand identity label */}
         <div className="absolute left-[150px] md:left-[190px] top-[48vh] font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest leading-snug text-black">
-          Brand Identity &<br />Visual Communication
+          {projects.find(p => p.slug === "symbol-card")?.category || "Brand Identity & Visual Communication"}
         </div>
 
         {/* Stationary bio text block */}
         <div className="absolute right-6 md:right-16 top-[55vh] max-w-[240px] md:max-w-xs font-sans font-bold text-[10px] md:text-xs leading-relaxed text-black select-text pointer-events-auto">
-          Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
+          {projects.find(p => p.slug === "alphabet-card")?.description || "Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands."}
         </div>
 
         {/* Copyright notice in background */}
@@ -677,9 +743,9 @@ export default function HomePage() {
       {isDetailOpen && activeProject && (
         <div className="fixed inset-0 z-50 flex flex-col md:flex-row bg-[#F7F7F7] overflow-hidden select-text">
           {/* Left panel (Info) */}
-          <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-between border-b md:border-b-0 md:border-r border-black min-h-[40vh] md:min-h-0 bg-white">
-            {/* Top row */}
-            <div className="flex justify-between items-center mb-8">
+          <div className="w-full md:w-1/2 h-[60vh] md:h-full p-6 md:p-12 flex flex-col justify-between border-b md:border-b-0 md:border-r border-black bg-white z-10">
+            {/* Top row (Static Header) */}
+            <div className="flex justify-between items-center pb-4 border-b border-black/10">
               <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
                 Selection
               </span>
@@ -691,29 +757,29 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Middle detailed metadata */}
-            <div className="my-auto max-w-lg">
+            {/* Middle detailed metadata (Scrollable if content overflows, keeping the layout perfectly solid) */}
+            <div className="flex-1 overflow-y-auto scrollbar-none py-6 my-2 max-w-lg w-full">
               {/* Layout labels */}
-              <div className="grid grid-cols-3 border-b border-black pb-4 mb-6 font-sans text-xs uppercase tracking-wider font-bold text-black/60">
+              <div className="grid grid-cols-3 border-b border-black pb-2 mb-4 font-sans text-[10px] md:text-xs uppercase tracking-wider font-bold text-black/60">
                 <span className="detail-pane-text">Title</span>
                 <span className="detail-pane-text">Category</span>
                 <span className="detail-pane-text">Year</span>
               </div>
 
               {/* Layout values */}
-              <div className="grid grid-cols-3 mb-10 font-sans text-[11px] uppercase font-bold">
+              <div className="grid grid-cols-3 mb-8 font-sans text-[10px] md:text-xs uppercase font-bold text-black">
                 <span className="detail-pane-text pr-2 truncate">{activeProject.title}</span>
                 <span className="detail-pane-text pr-2">{activeProject.category}</span>
                 <span className="detail-pane-text">{activeProject.year}</span>
               </div>
 
               {/* Giant Title */}
-              <h2 className="detail-pane-text text-4xl md:text-6xl font-black font-display uppercase tracking-tighter leading-none mb-6">
+              <h2 className="detail-pane-text text-3xl md:text-5xl font-black font-display uppercase tracking-tighter leading-none mb-6">
                 {activeProject.title}
               </h2>
 
               {/* Description */}
-              <p className="detail-pane-text font-sans text-sm md:text-base leading-relaxed text-black/80 mb-8">
+              <p className="detail-pane-text font-sans text-xs md:text-sm leading-relaxed text-black/80 mb-8">
                 {activeProject.description}
               </p>
 
@@ -724,45 +790,45 @@ export default function HomePage() {
                     href={activeProject.projectUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-black px-6 py-3 font-sans font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors duration-200"
+                    className="inline-flex items-center gap-2 border border-black px-4 py-2.5 font-sans font-bold text-[10px] md:text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span>Visit Project</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
               )}
             </div>
 
-            {/* Bottom slider controls */}
-            <div className="flex justify-between items-center mt-12 border-t border-black pt-6">
-              <span className="font-sans font-bold text-xs uppercase tracking-wider text-black/60">
+            {/* Bottom slider controls (Static Footer) */}
+            <div className="flex justify-between items-center pt-4 border-t border-black">
+              <span className="font-sans font-bold text-[10px] md:text-xs uppercase tracking-wider text-black/60">
                 {projects.findIndex((p) => p.slug === activeProject.slug) + 1} / {projects.length}
               </span>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <button
                   onClick={() => navigateProject("prev")}
-                  className="p-3 border border-black hover:bg-black hover:text-white transition-colors"
+                  className="p-2 md:p-3 border border-black hover:bg-black hover:text-white transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-3.5 h-3.5 md:w-4 h-4" />
                 </button>
                 <button
                   onClick={closeProject}
-                  className="p-3 border border-black hover:bg-black hover:text-white transition-colors font-sans font-bold text-xs uppercase tracking-widest px-6"
+                  className="p-2 md:p-3 border border-black hover:bg-black hover:text-white transition-colors font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest px-4 md:px-6"
                 >
                   Close
                 </button>
                 <button
                   onClick={() => navigateProject("next")}
-                  className="p-3 border border-black hover:bg-black hover:text-white transition-colors"
+                  className="p-2 md:p-3 border border-black hover:bg-black hover:text-white transition-colors"
                 >
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5 md:w-4 h-4" />
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Right panel (Image Container taking up ONE FULL SCREEN on the right, md:w-1/2) */}
-          <div className="w-full md:w-1/2 h-[60vh] md:h-full bg-[#FFFFFF] flex items-center justify-center p-0 relative overflow-hidden">
+          {/* Right panel (Image Container, responsive size) */}
+          <div className="w-full md:w-1/2 h-[40vh] md:h-full bg-[#FFFFFF] flex items-center justify-center p-0 relative overflow-hidden">
             <div 
               ref={detailImageRef}
               className="w-full h-full relative overflow-hidden"

@@ -46,6 +46,17 @@ export interface AdminData {
 // Initial seed data for fallback
 const DEFAULT_PROJECTS: ProjectData[] = [
   {
+    id: "symbol-card",
+    title: "Symbol Logo",
+    slug: "symbol-card",
+    category: "Brand Identity & Visual Communication",
+    year: "MM25.1.1",
+    description: "The official brand symbol representing Andrés Briganti's design practice.",
+    projectUrl: null,
+    sortOrder: 1,
+    images: []
+  },
+  {
     id: "1",
     title: "Rampant Studio",
     slug: "rampant-studio",
@@ -53,35 +64,33 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     year: "2024",
     description: "Rampant is a creative bureau specializing in creative direction, brand development, and digital design for brands in fashion and lifestyle. The studio helps up-and-coming brands find their voice and assist established ones in discovering a renewed way of expression.",
     projectUrl: "https://rampant.work",
-    sortOrder: 1,
-    images: [
-      { id: "img-1a", url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80", isCover: true }
-    ]
-  },
-  {
-    id: "2",
-    title: "AB Arca",
-    slug: "ab-arca",
-    category: "Type Design",
-    year: "2024",
-    description: "Arca is a modular typeface rooted in mid-century geometric explorations from the 50s and 60s. Its precisely squared letterforms come in lowercase, unicase, and uppercase variations, offering systematic typographic control. Built on a strict grid system, the font includes alternative glyphs that introduce subtle variations to headlines and logotypes. With extensive diacritic support spanning multiple languages, Arca commands attention at large scales—a typeface that honors historical grid-based design while functioning as a distinctive display option.",
-    projectUrl: "https://briganti.works/work/ab-arca",
     sortOrder: 2,
     images: [
-      { id: "img-2a", url: "https://images.unsplash.com/photo-1548345680-f5475ea5df84?auto=format&fit=crop&w=800&q=80", isCover: true }
+      { id: "img-1a", url: "https://assets.basehub.com/467cc7ea/473e69a044283cdd09f463dac8033a47/2024.ramp.id.01.01.png", isCover: true }
     ]
   },
   {
-    id: "3",
-    title: "Coleção",
-    slug: "colecao",
-    category: "Editorial Design, Visual Identity",
-    year: "2025",
-    description: "A printed catalog showcasing architectural landmarks and editorial design structures in Porto. The layout strictly adheres to Swiss grid principles, using high-density typography and high-contrast photography to create an immersive visual rhythm.",
+    id: "alphabet-card",
+    title: "Alphabet Poster",
+    slug: "alphabet-card",
+    category: "Typography & Display",
+    year: "014",
+    description: "Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.",
     projectUrl: null,
     sortOrder: 3,
+    images: []
+  },
+  {
+    id: "6",
+    title: "Brand Identity MM26",
+    slug: "brand-identity-mm26",
+    category: "Brand Identity, Typography",
+    year: "2026",
+    description: "Comprehensive corporate identity redesign including custom corporate typefaces, editorial styleguides, and packaging accents, emphasizing high-contrast stark geometry.",
+    projectUrl: null,
+    sortOrder: 4,
     images: [
-      { id: "img-3a", url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80", isCover: true }
+      { id: "img-6a", url: "https://assets.basehub.com/467cc7ea/3b56ce0cac898b8ff7117fc689587bce/2024.arca.td.02.08.png", isCover: true }
     ]
   },
   {
@@ -92,9 +101,35 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     year: "2024",
     description: "Visual identity and packaging series for Einstoffen's winter collection. Highlighting the textured surfaces of raw mountain rock combined with minimal typography elements, expressing Swiss alpine aesthetics in a contemporary lifestyle context.",
     projectUrl: "https://einstoffen.ch",
-    sortOrder: 4,
+    sortOrder: 5,
     images: [
-      { id: "img-4a", url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", isCover: true }
+      { id: "img-4a", url: "https://assets.basehub.com/467cc7ea/5a5e07e6c32d228c14c6b3bbe4c28c3c/2023.eins.id.03.01.png", isCover: true }
+    ]
+  },
+  {
+    id: "3",
+    title: "Coleção",
+    slug: "colecao",
+    category: "Editorial Design, Visual Identity",
+    year: "2025",
+    description: "A printed catalog showcasing architectural landmarks and editorial design structures in Porto. The layout strictly adheres to Swiss grid principles, using high-density typography and high-contrast photography to create an immersive visual rhythm.",
+    projectUrl: null,
+    sortOrder: 6,
+    images: [
+      { id: "img-3a", url: "https://assets.basehub.com/467cc7ea/4d145209f988cda07cb493824527d52f/2024.seti.td.02.01.png", isCover: true }
+    ]
+  },
+  {
+    id: "2",
+    title: "AB Arca",
+    slug: "ab-arca",
+    category: "Type Design",
+    year: "2024",
+    description: "Arca is a modular typeface rooted in mid-century geometric explorations from the 50s and 60s. Its precisely squared letterforms come in lowercase, unicase, and uppercase variations, offering systematic typographic control. Built on a strict grid system, the font includes alternative glyphs that introduce subtle variations to headlines and logotypes. With extensive diacritic support spanning multiple languages, Arca commands attention at large scales—a typeface that honors historical grid-based design while functioning as a distinctive display option.",
+    projectUrl: "https://briganti.works/work/ab-arca",
+    sortOrder: 7,
+    images: [
+      { id: "img-2a", url: "https://assets.basehub.com/467cc7ea/4d421afb9781e883ab8ae0d96cd7cdf2/2024.arca.td.02.04.png", isCover: true }
     ]
   },
   {
@@ -105,22 +140,9 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     year: "2023",
     description: "Brutalist typographic poster campaign for the National Theater production of William Shakespeare's Macbeth. Built with heavy compressed display types colliding with crisp informational blocks.",
     projectUrl: null,
-    sortOrder: 5,
+    sortOrder: 8,
     images: [
-      { id: "img-5a", url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80", isCover: true }
-    ]
-  },
-  {
-    id: "6",
-    title: "Brand Identity MM26",
-    slug: "brand-identity-mm26",
-    category: "Brand Identity, Typography",
-    year: "2026",
-    description: "Comprehensive corporate identity redesign including custom corporate typefaces, editorial styleguides, and packaging accents, emphasizing high-contrast stark geometry.",
-    projectUrl: null,
-    sortOrder: 6,
-    images: [
-      { id: "img-6a", url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80", isCover: true }
+      { id: "img-5a", url: "https://assets.basehub.com/467cc7ea/08c83f0fd4a42b622e75b05be393cea7/2023.eins.id.03.08.png", isCover: true }
     ]
   }
 ];

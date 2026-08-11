@@ -58,29 +58,14 @@ export async function POST(request: NextRequest) {
         try {
           const bytes = await file.arrayBuffer();
           const buffer = Buffer.from(bytes);
-          const ext = path.extname(file.name) || ".jpg";
-          const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
-          
-          const uploadsDir = path.join(process.cwd(), "public", "uploads");
-          
-          // Verify directory exists
-          if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-          }
-          
-          const filepath = path.join(uploadsDir, filename);
-          fs.writeFileSync(filepath, buffer);
-          imageUrl = `/uploads/${filename}`;
+          const base64Data = buffer.toString("base64");
+          const mimeType = file.type || "image/jpeg";
+          imageUrl = `data:${mimeType};base64,${base64Data}`;
         } catch (uploadError) {
-          console.error("Local file upload failed (likely read-only FS):", uploadError);
-          // If local file upload fails (e.g., on Vercel), fallback to direct URL if available
-          if (directUrl) {
-            imageUrl = directUrl;
-          } else {
-            return NextResponse.json({ 
-              error: "Local filesystem is read-only. Please provide a direct image URL when deployed on Vercel." 
-            }, { status: 400 });
-          }
+          console.error("Base64 conversion failed:", uploadError);
+          return NextResponse.json({ 
+            error: "Failed to process uploaded file." 
+          }, { status: 400 });
         }
       } else {
         imageUrl = directUrl;
