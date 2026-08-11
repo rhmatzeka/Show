@@ -15,8 +15,25 @@ export default function HomePage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
-  // Scroll container reference
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // Canvas movement state
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
+  
+  // Current translation offsets
+  const [translateX, setTranslateX] = useState(-300);
+  const [translateY, setTranslateY] = useState(-200);
+  const posX = useRef(-300);
+  const posY = useRef(-200);
+  
+  // Velocity for inertia
+  const velX = useRef(0);
+  const velY = useRef(0);
+  const lastTime = useRef(0);
+  const lastX = useRef(0);
+  const lastY = useRef(0);
+  const animationFrameId = useRef<number | null>(null);
 
   // Card items refs for GSAP animations
   const projectRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -47,26 +64,128 @@ export default function HomePage() {
     loadProjects();
   }, []);
 
-  // Convert vertical scroll wheel to horizontal scrolling on the container
+  // Infinite canvas physics loop (requestAnimationFrame) for inertia
+  useEffect(() => {
+    const updatePhysics = () => {
+      if (!isDragging.current && (Math.abs(velX.current) > 0.05 || Math.abs(velY.current) > 0.05)) {
+        // Apply friction
+        velX.current *= 0.94;
+        velY.current *= 0.94;
+
+        // Apply translation
+        posX.current += velX.current;
+        posY.current += velY.current;
+
+        setTranslateX(posX.current);
+        setTranslateY(posY.current);
+      }
+
+      animationFrameId.current = requestAnimationFrame(updatePhysics);
+    };
+
+    animationFrameId.current = requestAnimationFrame(updatePhysics);
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, []);
+
+  // Trackpad / Mouse wheel scroll handler to pan the canvas
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (isDetailOpen || showInfo) return;
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollLeft += e.deltaY;
-      }
+      e.preventDefault();
+
+      // Update positions
+      posX.current -= e.deltaX * 0.55;
+      posY.current -= e.deltaY * 0.55;
+
+      setTranslateX(posX.current);
+      setTranslateY(posY.current);
+
+      // Add temporary velocity so inertia takes over slightly when scrolling stops
+      velX.current = -e.deltaX * 0.12;
+      velY.current = -e.deltaY * 0.12;
     };
 
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.addEventListener("wheel", handleWheel, { passive: true });
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener("wheel", handleWheel, { passive: false });
     }
 
     return () => {
-      if (container) {
-        container.removeEventListener("wheel", handleWheel);
+      if (canvas) {
+        canvas.removeEventListener("wheel", handleWheel);
       }
     };
   }, [isDetailOpen, showInfo]);
+
+  // Pointer event handlers (Mouse and Touch)
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (isDetailOpen || showInfo) return; // Disable canvas pan when detail/info is open
+    
+    // Check if clicked an interactive element
+    const target = e.target as HTMLElement;
+    if (target.closest("button") || target.closest(".project-card-interactive") || target.closest("a")) return;
+
+    isDragging.current = true;
+    startX.current = e.clientX - posX.current;
+    startY.current = e.clientY - posY.current;
+    
+    lastX.current = e.clientX;
+    lastY.current = e.clientY;
+    lastTime.current = Date.now();
+    velX.current = 0;
+    velY.current = 0;
+    
+    if (canvasRef.current) {
+      canvasRef.current.setPointerCapture(e.pointerId);
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+
+    const x = e.clientX;
+    const y = e.clientY;
+    const now = Date.now();
+    const dt = now - lastTime.current;
+
+    // Calculate instantaneous velocity
+    if (dt > 0) {
+      const instantVelX = (x - lastX.current);
+      const instantVelY = (y - lastY.current);
+      velX.current = velX.current * 0.25 + instantVelX * 0.75;
+      velY.current = velY.current * 0.25 + instantVelY * 0.75;
+    }
+
+    posX.current = x - startX.current;
+    posY.current = y - startY.current;
+
+    setTranslateX(posX.current);
+    setTranslateY(posY.current);
+
+    lastX.current = x;
+    lastY.current = y;
+    lastTime.current = now;
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    
+    // If pointer up happened but the drag duration was long without moving, reset velocity
+    if (Date.now() - lastTime.current > 100) {
+      velX.current = 0;
+      velY.current = 0;
+    }
+
+    if (canvasRef.current) {
+      canvasRef.current.releasePointerCapture(e.pointerId);
+    }
+  };
 
   // Open project detail with FLIP transition
   const openProject = (project: ProjectData, itemId: string) => {
@@ -146,7 +265,7 @@ export default function HomePage() {
       ease: "power2.in",
       onComplete: () => {
         // Locate where the card is currently rendered on screen
-        const matchedItem = scrollItems.find(item => item.type === "project" && item.slug === activeProject.slug);
+        const matchedItem = canvasItems.find(item => item.type === "project" && item.slug === activeProject.slug);
         const itemId = matchedItem ? matchedItem.id : "";
         const cardEl = matchedItem ? projectRefs.current[matchedItem.id] : null;
         
@@ -253,16 +372,42 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isDetailOpen, showInfo, activeProject]);
 
-  // Define layout items: smaller, arranged in two distinct rows (exactly like reference Image 2)
-  const scrollItems = [
-    // --- ROW 1 (top: 14vh) ---
+  // Virtual Canvas dimensions for infinite wrapping boundaries
+  const canvasWidth = 2000;
+  const canvasHeight = 1200;
+
+  // Modulo-based Wrapping function to achieve a smooth 360-degree panning layout
+  const getWrappedPosition = (baseX: number, baseY: number, itemWidth: number, itemHeight: number) => {
+    // Wrap screen position in boundaries [-itemWidth, canvasWidth - itemWidth]
+    const screenX = ((baseX + translateX + itemWidth) % canvasWidth + canvasWidth) % canvasWidth - itemWidth;
+    const screenY = ((baseY + translateY + itemHeight) % canvasHeight + canvasHeight) % canvasHeight - itemHeight;
+
+    // Convert back to canvas-relative coordinates since the container itself is translated
+    return {
+      left: screenX - translateX,
+      top: screenY - translateY
+    };
+  };
+
+  // Define layout items: sized correctly to match Image 2
+  const canvasItems = [
+    // Column 1
+    {
+      id: "item-einstoffen",
+      type: "project" as const,
+      slug: "einstoffen",
+      left: 100,
+      top: 150,
+      width: 320,
+      height: 200
+    },
     {
       id: "item-logo-three-pronged",
       type: "text" as const,
       left: 100,
-      top: "14vh",
+      top: 700,
       width: 250,
-      height: 250,
+      height: 220,
       content: (
         <div className="w-full h-full bg-[#FFFFFF] border border-black p-6 flex flex-col justify-end items-start relative select-text">
           {/* A cool brutalist custom logo / three prongs */}
@@ -274,86 +419,75 @@ export default function HomePage() {
         </div>
       )
     },
+    // Column 2
+    {
+      id: "item-colecao",
+      type: "project" as const,
+      slug: "colecao",
+      left: 480,
+      top: 180,
+      width: 300,
+      height: 400
+    },
     {
       id: "item-rampant",
       type: "project" as const,
       slug: "rampant-studio",
-      left: 450,
-      top: "10vh",
+      left: 480,
+      top: 720,
+      width: 300,
+      height: 400
+    },
+    // Column 3
+    {
+      id: "item-arca-logo",
+      type: "project" as const,
+      slug: "ab-arca",
+      left: 840,
+      top: 130,
       width: 320,
-      height: 420
+      height: 220
     },
     {
       id: "item-alphabet",
       type: "text" as const,
-      left: 900,
-      top: "10vh",
-      width: 320,
-      height: 400,
+      left: 840,
+      top: 720,
+      width: 300,
+      height: 250,
       content: (
-        <div className="w-full h-full bg-[#000000] p-8 flex flex-col justify-center items-start border border-black">
-          <div className="font-display font-black text-3xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+        <div className="w-full h-full bg-[#000000] p-6 flex flex-col justify-center items-start border border-black">
+          <div className="font-display font-black text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
             ABCDEFGHIKL<br />
             MNÑOPQRSTUV<br />
             WXYZ
           </div>
-          <div className="text-[60px] font-display font-black text-white leading-none mt-6">
-            014
-          </div>
         </div>
       )
+    },
+    // Column 4
+    {
+      id: "item-macbeth",
+      type: "project" as const,
+      slug: "macbeth",
+      left: 1200,
+      top: 160,
+      width: 300,
+      height: 420
     },
     {
       id: "item-brand-identity-mm26",
       type: "project" as const,
       slug: "brand-identity-mm26",
-      left: 1350,
-      top: "14vh",
-      width: 320,
-      height: 220
-    },
-
-    // --- ROW 2 (top: 58vh) ---
-    {
-      id: "item-einstoffen",
-      type: "project" as const,
-      slug: "einstoffen",
-      left: 200,
-      top: "58vh",
-      width: 420,
-      height: 240
-    },
-    {
-      id: "item-colecao",
-      type: "project" as const,
-      slug: "colecao",
-      left: 700,
-      top: "56vh",
+      left: 1200,
+      top: 720,
       width: 300,
-      height: 400
-    },
-    {
-      id: "item-arca-logo",
-      type: "project" as const,
-      slug: "ab-arca",
-      left: 1100,
-      top: "58vh",
-      width: 320,
-      height: 220
-    },
-    {
-      id: "item-macbeth",
-      type: "project" as const,
-      slug: "macbeth",
-      left: 1520,
-      top: "56vh",
-      width: 300,
-      height: 400
+      height: 200
     }
   ];
 
   return (
-    <div className="w-screen h-screen overflow-hidden relative bg-white select-none">
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-white select-none">
       {/* 1. Minimal Header (TRANSPARENT background to let cards go underneath) */}
       <header className="fixed top-0 left-0 right-0 h-16 flex justify-between items-center px-6 md:px-12 bg-transparent z-40">
         <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2">
@@ -364,10 +498,13 @@ export default function HomePage() {
             onClick={() => {
               setIsDetailOpen(false);
               setShowInfo(false);
-              // Reset horizontal scroll
-              if (scrollContainerRef.current) {
-                scrollContainerRef.current.scrollTo({ left: 0, behavior: "smooth" });
-              }
+              // Reset canvas back to original coordinate
+              posX.current = -300;
+              posY.current = -200;
+              setTranslateX(-300);
+              setTranslateY(-200);
+              velX.current = 0;
+              velY.current = 0;
             }} 
             className="hover:underline hover:opacity-75 transition-opacity"
           >
@@ -381,12 +518,15 @@ export default function HomePage() {
           </button>
           <button 
             onClick={() => {
+              // Focus / pan to the center of the first project
               setIsDetailOpen(false);
               setShowInfo(false);
-              // Scroll to first project
-              if (scrollContainerRef.current) {
-                scrollContainerRef.current.scrollTo({ left: 200, behavior: "smooth" });
-              }
+              posX.current = -100;
+              posY.current = -150;
+              setTranslateX(-100);
+              setTranslateY(-150);
+              velX.current = 0;
+              velY.current = 0;
             }} 
             className="hover:underline hover:opacity-75 transition-opacity"
           >
@@ -395,7 +535,7 @@ export default function HomePage() {
         </nav>
       </header>
 
-      {/* 2. STATIONARY / FIXED BACKGROUND TEXT LAYER (Behind the scrolling canvas, z-0) */}
+      {/* 2. STATIONARY / FIXED BACKGROUND TEXT LAYER (Behind the draggable canvas, z-0) */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         
         {/* Desktop Vertical BRIGANTI banner on the left background */}
@@ -414,18 +554,18 @@ export default function HomePage() {
         </div>
 
         {/* Stationary version indicator */}
-        <div className="absolute left-28 top-[48vh] font-sans font-bold text-xs uppercase tracking-widest text-black">
+        <div className="absolute left-28 top-[50vh] font-sans font-bold text-xs uppercase tracking-widest text-black">
           <span className="opacity-40">Version</span>
           <span className="ml-8 text-black">MM25.1.1</span>
         </div>
         
         {/* Stationary brand identity label */}
-        <div className="absolute left-28 top-[53vh] font-sans font-bold text-xs uppercase tracking-widest leading-snug text-black">
+        <div className="absolute left-28 top-[55vh] font-sans font-bold text-xs uppercase tracking-widest leading-snug text-black">
           Brand Identity &<br />Visual Communication
         </div>
 
         {/* Stationary bio text block */}
-        <div className="absolute left-[1220px] top-[48vh] max-w-sm font-sans font-bold text-xs leading-relaxed text-black select-text pointer-events-auto">
+        <div className="absolute left-[840px] top-[50vh] max-w-sm font-sans font-bold text-xs leading-relaxed text-black select-text pointer-events-auto">
           Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
         </div>
 
@@ -435,27 +575,40 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 3. NATIVE HORIZONTAL SCROLL CANVAS (z-10, draws OVER the background text, UNDER the header text) */}
+      {/* 3. Infinite Panning Canvas (z-10, draws OVER the background text, UNDER the header text) */}
       {loading ? (
         <div className="w-full h-full flex justify-center items-center font-sans font-bold text-xl uppercase tracking-widest bg-white z-10">
           Loading Portfolio...
         </div>
       ) : (
         <main
-          ref={scrollContainerRef}
-          className="w-full h-full overflow-x-auto overflow-y-hidden scroll-smooth scrollbar-none relative z-10"
+          ref={canvasRef}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          className="w-full h-full relative z-10"
+          style={{ touchAction: "none" }}
         >
-          {/* Inner container to layout items horizontally */}
-          <div className="h-full w-[2100px] relative">
-            {scrollItems.map((item) => {
+          <div
+            className="absolute top-0 left-0 w-[4000px] h-[3000px] bg-transparent cursor-grab active:cursor-grabbing"
+            style={{
+              transform: `translate3d(${translateX}px, ${translateY}px, 0)`,
+              transition: isDragging.current ? "none" : "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+              willChange: "transform"
+            }}
+          >
+            {canvasItems.map((item) => {
+              // Get wrapped coordinate of this card
+              const pos = getWrappedPosition(item.left, item.top, item.width, item.height);
+
               if (item.type === "text") {
                 return (
                   <div
                     key={item.id}
                     className="absolute"
                     style={{
-                      left: item.left,
-                      top: item.top,
+                      left: pos.left,
+                      top: pos.top,
                       width: item.width,
                       height: item.height,
                     }}
@@ -481,8 +634,8 @@ export default function HomePage() {
                   onClick={() => openProject(project, item.id)}
                   className="absolute border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors"
                   style={{
-                    left: item.left,
-                    top: item.top,
+                    left: pos.left,
+                    top: pos.top,
                     width: item.width,
                     height: item.height,
                   }}
@@ -499,12 +652,12 @@ export default function HomePage() {
                               src={coverImg.url}
                               alt={project.title}
                               fill
-                              sizes="400px"
+                              sizes="300px"
                               className="object-cover grayscale contrast-125 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                             />
                           )}
                           <div className="absolute bottom-4 left-0 right-0 text-center z-10">
-                            <span className="font-display font-black text-white text-2xl tracking-wider uppercase">
+                            <span className="font-display font-black text-white text-xl tracking-wider uppercase">
                               EINSTOFFEN
                             </span>
                           </div>
@@ -525,7 +678,7 @@ export default function HomePage() {
                             src={coverImg.url}
                             alt={project.title}
                             fill
-                            sizes="400px"
+                            sizes="300px"
                             className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                           />
                         )}
@@ -561,10 +714,10 @@ export default function HomePage() {
                       // Macbeth poster representation
                       <div className="w-full h-full bg-white flex flex-col justify-between p-8 flip-source-el border border-black">
                         <div>
-                          <span className="font-display font-black text-xs text-red-600 uppercase tracking-widest block mb-3 leading-none">
+                          <span className="font-display font-black text-[9px] text-red-600 uppercase tracking-widest block mb-2.5 leading-none">
                             THE TRAGEDY OF
                           </span>
-                          <h4 className="font-sans font-black text-4xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
+                          <h4 className="font-sans font-black text-3xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
                             AaBb<br />
                             CcDd<br />
                             0123<br />
@@ -572,13 +725,13 @@ export default function HomePage() {
                           </h4>
                         </div>
                         <div>
-                          <span className="font-sans font-bold text-[10px] text-red-600 block uppercase leading-none mb-1">
+                          <span className="font-sans font-bold text-[9px] text-red-600 block uppercase leading-none mb-1">
                             BY WILLIAM
                           </span>
                           <span className="font-sans font-black text-xl text-black block uppercase leading-none tracking-tighter">
                             SHAKESPEARE
                           </span>
-                          <span className="font-sans font-bold text-[9px] text-black/60 uppercase mt-3 block">
+                          <span className="font-sans font-bold text-[8px] text-black/60 uppercase mt-3 block">
                             NATIONAL THEATER
                           </span>
                         </div>
@@ -591,7 +744,7 @@ export default function HomePage() {
                             src={coverImg.url}
                             alt={project.title}
                             fill
-                            sizes="400px"
+                            sizes="300px"
                             className="object-cover grayscale contrast-125 mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                           />
                         )}
