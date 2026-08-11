@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FFFFFF;
+    color: #000000;
+    font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Custom scrollbar matching brutalist look */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #FFFFFF;
+    border-left: 1px solid #000000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #000000;
+  }
+
+  /* Selection style */
+  ::selection {
+    background: #000000;
+    color: #FFFFFF;
+  }
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* 360 Dragging Grid Canvas styling */
+.canvas-container {
+  cursor: grab;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3000px;
+  height: 3000px;
+  background-color: transparent;
+  will-change: transform;
+}
+
+.canvas-container:active {
+  cursor: grabbing;
+}
+
+/* Brutalist details */
+.text-compressed {
+  font-stretch: ultra-condensed;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+}
+
+.sidebar-text-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Hover reveal effect */
+.portfolio-card-mask {
+  background: rgba(0, 0, 0, 0.95);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
