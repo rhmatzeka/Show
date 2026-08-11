@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, LogOut, Globe, Folder, Calendar, Link, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Edit, X as CloseIcon, LogOut, Globe, Folder, Calendar, Link, Image as ImageIcon } from "lucide-react";
 
 interface ProjectImage {
   id: string;
@@ -29,6 +29,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
 
   // Form states
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [year, setYear] = useState("");
@@ -88,7 +89,47 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Submit project form
+  // Start Editing a project
+  const handleEditSelect = (project: Project) => {
+    setEditingProject(project);
+    setTitle(project.title);
+    setCategory(project.category);
+    setYear(project.year);
+    setDescription(project.description);
+    setProjectUrl(project.projectUrl || "");
+    
+    // Fill cover URL if exists
+    const cover = project.images.find(img => img.isCover) || project.images[0];
+    if (cover) {
+      setImageUrl(cover.url);
+      setImageType("url");
+    } else {
+      setImageUrl("");
+    }
+    
+    setImageFile(null);
+    setFormError("");
+    setFormSuccess("");
+
+    // Scroll smoothly to form
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Cancel edit
+  const handleCancelEdit = () => {
+    setEditingProject(null);
+    setTitle("");
+    setCategory("");
+    setYear("");
+    setDescription("");
+    setProjectUrl("");
+    setImageUrl("");
+    setImageFile(null);
+    setFormError("");
+    setFormSuccess("");
+  };
+
+  // Submit project form (Add or Edit)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
@@ -101,16 +142,18 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    if (imageType === "url" && !imageUrl) {
-      setFormError("Please provide an image URL.");
-      setSubmitting(false);
-      return;
-    }
-
-    if (imageType === "upload" && !imageFile) {
-      setFormError("Please select an image file to upload.");
-      setSubmitting(false);
-      return;
+    // Cover image is optional when editing (keep old if not changed)
+    if (!editingProject) {
+      if (imageType === "url" && !imageUrl) {
+        setFormError("Please provide an image URL.");
+        setSubmitting(false);
+        return;
+      }
+      if (imageType === "upload" && !imageFile) {
+        setFormError("Please select an image file to upload.");
+        setSubmitting(false);
+        return;
+      }
     }
 
     try {
@@ -121,22 +164,29 @@ export default function AdminDashboardPage() {
       formData.append("description", description);
       formData.append("projectUrl", projectUrl);
 
-      if (imageType === "url") {
+      if (editingProject) {
+        formData.append("id", editingProject.id);
+      }
+
+      if (imageType === "url" && imageUrl) {
         formData.append("imageUrl", imageUrl);
       } else if (imageType === "upload" && imageFile) {
         formData.append("imageFile", imageFile);
       }
 
+      const method = editingProject ? "PUT" : "POST";
       const res = await fetch("/api/projects", {
-        method: "POST",
+        method,
         body: formData,
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setFormSuccess("Project created successfully!");
+        setFormSuccess(editingProject ? "Project updated successfully!" : "Project created successfully!");
+        
         // Reset form
+        setEditingProject(null);
         setTitle("");
         setCategory("");
         setYear("");
@@ -144,10 +194,11 @@ export default function AdminDashboardPage() {
         setProjectUrl("");
         setImageUrl("");
         setImageFile(null);
+        
         // Refresh list
         loadProjects();
       } else {
-        setFormError(data.error || "Failed to create project.");
+        setFormError(data.error || "Failed to save project.");
       }
     } catch (err) {
       setFormError("Something went wrong during submission.");
@@ -168,6 +219,10 @@ export default function AdminDashboardPage() {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        // If we were editing the deleted project, cancel editing
+        if (editingProject?.id === id) {
+          handleCancelEdit();
+        }
         loadProjects();
       } else {
         alert(data.error || "Failed to delete project.");
@@ -180,25 +235,25 @@ export default function AdminDashboardPage() {
 
   if (!authChecked) {
     return (
-      <div className="w-screen h-screen flex justify-center items-center font-sans font-bold text-lg bg-white uppercase tracking-widest">
+      <div className="w-screen h-screen flex justify-center items-center font-sans font-bold text-lg bg-white uppercase tracking-widest text-black">
         Verifying Session...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] text-black pb-24">
-      {/* Admin Navbar */}
-      <header className="sticky top-0 left-0 right-0 h-20 border-b border-black flex justify-between items-center px-6 md:px-12 bg-white z-40">
+    <div className="min-h-screen bg-[#FDFDFD] text-black pb-24 select-none">
+      {/* Admin Navbar (Responsive Wrap) */}
+      <header className="sticky top-0 left-0 right-0 min-h-[5rem] py-4 border-b border-black flex flex-col sm:flex-row gap-4 justify-between items-center px-6 md:px-12 bg-white z-40">
         <div className="flex items-center gap-4">
           <span className="font-display font-black text-2xl uppercase tracking-tight">
             CMS Dashboard
           </span>
-          <span className="hidden md:inline-block text-[10px] font-sans font-bold uppercase border border-black px-2 py-0.5 mt-1 bg-black text-white">
+          <span className="text-[10px] font-sans font-bold uppercase border border-black px-2 py-0.5 mt-0.5 bg-black text-white">
             Admin Mode
           </span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           <a
             href="/"
             target="_blank"
@@ -220,14 +275,14 @@ export default function AdminDashboardPage() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Left Column: Form (5 Cols) */}
         <section className="lg:col-span-5">
-          <div className="border border-black p-8 bg-white shadow-sm sticky top-28">
+          <div className="border border-black p-6 md:p-8 bg-white shadow-sm lg:sticky lg:top-28">
             <div className="border-b border-black pb-4 mb-6">
               <h2 className="text-xl font-black font-display uppercase tracking-tight flex items-center gap-2">
                 <Plus className="w-5 h-5" />
-                <span>Add New Project</span>
+                <span>{editingProject ? `Edit: ${editingProject.title}` : "Add New Project"}</span>
               </h2>
               <p className="text-[10px] uppercase font-sans font-bold text-black/60 mt-1">
-                Fill metadata and upload visual cover
+                {editingProject ? "Update existing project details and visual cover" : "Fill metadata and upload visual cover"}
               </p>
             </div>
 
@@ -259,7 +314,8 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Grid: Responsive 1 col on mobile, 2 col on tablet/desktop */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs uppercase font-sans font-bold text-black flex items-center gap-1.5">
                     <Folder className="w-3.5 h-3.5 text-black/60" />
@@ -347,7 +403,7 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1.5">
                     <label className="block text-xs uppercase font-sans font-bold text-black flex items-center gap-1.5">
                       <ImageIcon className="w-3.5 h-3.5 text-black/60" />
-                      <span>Direct Image URL (Recommended for Vercel)</span>
+                      <span>Direct Image URL {editingProject && "(Optional - Leave empty to keep old)"}</span>
                     </label>
                     <input
                       type="url"
@@ -361,7 +417,7 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1.5">
                     <label className="block text-xs uppercase font-sans font-bold text-black flex items-center gap-1.5">
                       <ImageIcon className="w-3.5 h-3.5 text-black/60" />
-                      <span>Upload Local File (Only local filesystem)</span>
+                      <span>Upload Local File {editingProject && "(Optional - Leave empty to keep old)"}</span>
                     </label>
                     <input
                       type="file"
@@ -373,20 +429,32 @@ export default function AdminDashboardPage() {
                 )}
               </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-4 border border-black font-sans font-bold text-xs uppercase tracking-widest bg-black text-white hover:bg-white hover:text-black transition-colors duration-200"
-              >
-                {submitting ? "Publishing..." : "Add Project"}
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-4 border border-black font-sans font-bold text-xs uppercase tracking-widest bg-black text-white hover:bg-white hover:text-black transition-colors duration-200"
+                >
+                  {submitting ? "Saving..." : editingProject ? "Save Changes" : "Add Project"}
+                </button>
+                
+                {editingProject && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="w-full py-3 border border-black font-sans font-bold text-xs uppercase tracking-widest bg-white text-black hover:bg-black hover:text-white transition-colors duration-200"
+                  >
+                    Cancel Edit
+                  </button>
+                )}
+              </div>
             </form>
           </div>
         </section>
 
         {/* Right Column: List of Projects (7 Cols) */}
         <section className="lg:col-span-7">
-          <div className="border border-black p-8 bg-white shadow-sm h-full">
+          <div className="border border-black p-6 md:p-8 bg-white shadow-sm h-full">
             <div className="border-b border-black pb-4 mb-6 flex justify-between items-end">
               <div>
                 <h2 className="text-xl font-black font-display uppercase tracking-tight">
@@ -416,10 +484,10 @@ export default function AdminDashboardPage() {
                   return (
                     <div
                       key={project.id}
-                      className="border border-black p-4 flex gap-4 bg-white hover:border-black/70 items-center justify-between transition-colors"
+                      className="border border-black p-4 flex gap-4 bg-white hover:border-black/70 items-center justify-between transition-colors flex-wrap sm:flex-nowrap"
                     >
                       {/* Image Thumbnail */}
-                      <div className="w-16 h-20 border border-black/10 relative overflow-hidden bg-black/5 shrink-0">
+                      <div className="w-16 h-20 border border-black/10 relative overflow-hidden bg-black/5 shrink-0 mx-auto sm:mx-0">
                         {cover ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -435,8 +503,8 @@ export default function AdminDashboardPage() {
                       </div>
 
                       {/* Content */}
-                      <div className="flex-grow min-w-0 pr-4">
-                        <div className="flex items-center gap-2 mb-1">
+                      <div className="flex-grow min-w-0 pr-4 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row items-center gap-2 mb-1">
                           <h3 className="font-sans font-black text-sm uppercase tracking-tight truncate">
                             {project.title}
                           </h3>
@@ -447,19 +515,30 @@ export default function AdminDashboardPage() {
                         <p className="text-[10px] uppercase font-sans text-black/40 tracking-wider truncate mb-1">
                           {project.category}
                         </p>
-                        <p className="text-[11px] font-sans text-black/70 line-clamp-1 italic">
+                        <p className="text-[11px] font-sans text-black/70 line-clamp-2 italic">
                           {project.description}
                         </p>
                       </div>
 
-                      {/* Actions */}
-                      <button
-                        onClick={() => handleDelete(project.id)}
-                        className="p-3 border border-black bg-white hover:bg-black hover:text-white text-black shrink-0 transition-colors"
-                        title="Delete Project"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {/* Actions (Responsive wrap) */}
+                      <div className="flex sm:flex-col gap-2 w-full sm:w-auto shrink-0 justify-center sm:justify-start">
+                        <button
+                          onClick={() => handleEditSelect(project)}
+                          className="flex-grow sm:flex-grow-0 p-3 border border-black bg-white hover:bg-black hover:text-white text-black transition-colors flex items-center justify-center gap-1.5 font-sans font-bold text-[10px] uppercase sm:p-2.5"
+                          title="Edit Project"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          <span className="sm:hidden">Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(project.id)}
+                          className="flex-grow sm:flex-grow-0 p-3 border border-black bg-white hover:bg-red-600 hover:text-white text-black transition-colors flex items-center justify-center gap-1.5 font-sans font-bold text-[10px] uppercase sm:p-2.5 sm:hover:bg-black"
+                          title="Delete Project"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span className="sm:hidden">Delete</span>
+                        </button>
+                      </div>
                     </div>
                   );
                 })}

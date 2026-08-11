@@ -303,6 +303,77 @@ export async function deleteProject(id: string): Promise<boolean> {
   return db.projects.length < initialLength;
 }
 
+export async function updateProject(id: string, data: Partial<Omit<ProjectData, "id">>): Promise<ProjectData | null> {
+  if (prisma && isPrismaEnabled) {
+    try {
+      const updateData: any = {
+        title: data.title,
+        slug: data.slug,
+        category: data.category,
+        year: data.year,
+        description: data.description,
+        projectUrl: data.projectUrl,
+        sortOrder: data.sortOrder,
+      };
+
+      // If new images are provided
+      if (data.images && data.images.length > 0) {
+        // Delete old images first
+        await prisma.image.deleteMany({
+          where: { projectId: id }
+        });
+        updateData.images = {
+          create: data.images.map(img => ({
+            url: img.url,
+            isCover: img.isCover
+          }))
+        };
+      }
+
+      const updated = await prisma.project.update({
+        where: { id },
+        data: updateData,
+        include: { images: true }
+      });
+
+      return {
+        id: updated.id,
+        title: updated.title,
+        slug: updated.slug,
+        category: updated.category,
+        year: updated.year,
+        description: updated.description,
+        projectUrl: updated.projectUrl,
+        sortOrder: updated.sortOrder,
+        images: updated.images.map(img => ({ id: img.id, url: img.url, isCover: img.isCover }))
+      };
+    } catch (err) {
+      console.error("Prisma update failed, using JSON DB fallback", err);
+    }
+  }
+
+  const db = readJsonDb();
+  const projIndex = db.projects.findIndex(p => p.id === id);
+  if (projIndex === -1) return null;
+
+  const currentProj = db.projects[projIndex];
+  const updatedProj: ProjectData = {
+    ...currentProj,
+    title: data.title !== undefined ? data.title : currentProj.title,
+    slug: data.slug !== undefined ? data.slug : currentProj.slug,
+    category: data.category !== undefined ? data.category : currentProj.category,
+    year: data.year !== undefined ? data.year : currentProj.year,
+    description: data.description !== undefined ? data.description : currentProj.description,
+    projectUrl: data.projectUrl !== undefined ? data.projectUrl : currentProj.projectUrl,
+    sortOrder: data.sortOrder !== undefined ? data.sortOrder : currentProj.sortOrder,
+    images: data.images !== undefined ? data.images : currentProj.images
+  };
+
+  db.projects[projIndex] = updatedProj;
+  writeJsonDb(db);
+  return updatedProj;
+}
+
 export async function getAdminByUsername(username: string): Promise<AdminData | null> {
   if (prisma && isPrismaEnabled) {
     try {
