@@ -37,16 +37,27 @@ export default function HomePage() {
         const res = await fetch("/api/projects");
         const data = await res.json();
         if (data.projects) {
+          // Set opacity 0 initially on all interactive cards to prevent flash/appearing suddenly
+          gsap.set(".project-card-interactive", { opacity: 0, y: 150 });
           setProjects(data.projects);
           
-          // Animate cards entrance using GSAP
+          // Animate cards entrance sequentially (staggered stack delay)
           setTimeout(() => {
-            gsap.fromTo(
+            gsap.to(
               ".project-card-interactive",
-              { opacity: 0, y: 100 },
-              { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: "power4.out" }
+              { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1.6, 
+                stagger: {
+                  amount: 0.8,
+                  grid: "auto",
+                  from: "start"
+                }, 
+                ease: "power4.out" 
+              }
             );
-          }, 300);
+          }, 100);
         }
       } catch (err) {
         console.error("Error fetching projects:", err);
@@ -485,7 +496,10 @@ export default function HomePage() {
             }
 
             return (
-              <div key={itemId} className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black">
+              <div
+                key={itemId}
+                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black project-card-interactive"
+              >
                 <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
                   ABCDEFGHIKL<br />
                   MNÑOPQRSTUV<br />
