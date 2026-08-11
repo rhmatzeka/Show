@@ -38,6 +38,15 @@ export default function HomePage() {
         const data = await res.json();
         if (data.projects) {
           setProjects(data.projects);
+          
+          // Animate cards entrance using GSAP
+          setTimeout(() => {
+            gsap.fromTo(
+              ".project-card-interactive",
+              { opacity: 0, y: 100 },
+              { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: "power4.out" }
+            );
+          }, 300);
         }
       } catch (err) {
         console.error("Error fetching projects:", err);
@@ -297,7 +306,12 @@ export default function HomePage() {
             }
 
             return (
-              <div key={itemId} className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none">
+              <div
+                key={itemId}
+                ref={(el) => { projectRefs.current[itemId] = el; }}
+                onClick={() => project && openProject(project, itemId)}
+                className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none project-card-interactive"
+              >
                 {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
                 <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
                   <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
