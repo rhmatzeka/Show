@@ -232,16 +232,19 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isDetailOpen, showInfo, activeProject]);
 
-  // Define layout items for left/right columns
+  // Define layout items for grid sequencing
   const scrollItems = [
-    { id: "item-einstoffen", type: "project" as const, slug: "einstoffen" },
+    // --- ROW 1 ---
     { id: "item-logo-three-pronged", type: "text" as const },
     { id: "item-rampant", type: "project" as const, slug: "rampant-studio" },
+    { id: "item-alphabet", type: "text" as const },
+    { id: "item-brand-identity-mm26", type: "project" as const, slug: "brand-identity-mm26" },
+
+    // --- ROW 2 ---
+    { id: "item-einstoffen", type: "project" as const, slug: "einstoffen" },
     { id: "item-colecao", type: "project" as const, slug: "colecao" },
     { id: "item-arca-logo", type: "project" as const, slug: "ab-arca" },
-    { id: "item-alphabet", type: "text" as const },
-    { id: "item-macbeth", type: "project" as const, slug: "macbeth" },
-    { id: "item-brand-identity-mm26", type: "project" as const, slug: "brand-identity-mm26" }
+    { id: "item-macbeth", type: "project" as const, slug: "macbeth" }
   ];
 
   return (
@@ -304,18 +307,18 @@ export default function HomePage() {
         </div>
 
         {/* Stationary version indicator */}
-        <div className="absolute left-28 md:left-32 top-[45vh] font-sans font-bold text-xs uppercase tracking-widest text-black">
+        <div className="absolute left-28 md:left-32 top-[44vh] font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest text-black">
           <span className="opacity-40">Version</span>
           <span className="ml-8 text-black">MM25.1.1</span>
         </div>
         
         {/* Stationary brand identity label */}
-        <div className="absolute left-28 md:left-32 top-[50vh] font-sans font-bold text-xs uppercase tracking-widest leading-snug text-black">
+        <div className="absolute left-28 md:left-32 top-[48vh] font-sans font-bold text-[10px] md:text-xs uppercase tracking-widest leading-snug text-black">
           Brand Identity &<br />Visual Communication
         </div>
 
         {/* Stationary bio text block */}
-        <div className="absolute right-6 md:right-16 top-[55vh] max-w-xs md:max-w-sm font-sans font-bold text-xs leading-relaxed text-black select-text pointer-events-auto">
+        <div className="absolute right-6 md:right-16 top-[55vh] max-w-[280px] md:max-w-sm font-sans font-bold text-[10px] md:text-xs leading-relaxed text-black select-text pointer-events-auto">
           Andrés Briganti is a designer specializing in brand identity and the visual systems that support it. He works across editorial design, digital experiences, and custom typefaces to deliver clear, cohesive communication for brands.
         </div>
 
@@ -335,265 +338,258 @@ export default function HomePage() {
           ref={scrollContainerRef}
           className="w-full h-full overflow-y-auto overflow-x-hidden scroll-smooth relative z-10"
         >
-          {/* Responsive two-column grid on desktop, single-column on mobile */}
-          <div className="max-w-6xl mx-auto px-6 md:px-12 pt-28 pb-32 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 pl-24 md:pl-32">
+          {/* 2 columns on mobile, 4 columns on desktop */}
+          <div className="max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-32 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 pl-24 md:pl-32">
             
-            {/* LEFT COLUMN */}
-            <div className="flex flex-col gap-16 md:gap-24">
-              
-              {/* Item 1: Einstoffen project */}
-              {(() => {
-                const project = projects.find(p => p.slug === "einstoffen");
-                if (!project) return null;
-                const coverImg = project.images.find(img => img.isCover) || project.images[0];
-                const isHidden = hiddenCardId === "item-einstoffen";
+            {/* ROW 1: Logo Card, Rampant, Alphabet, MM26 Stripes */}
+            
+            {/* Item 1: Three-pronged logo card */}
+            <div className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-end items-start relative select-text">
+              <div className="flex flex-col gap-1.5 items-start w-20">
+                <div className="h-2 w-12 md:w-16 bg-black"></div>
+                <div className="h-2 w-16 md:w-20 bg-black"></div>
+                <div className="h-2 w-8 md:w-10 bg-black"></div>
+              </div>
+            </div>
 
-                return (
-                  <div
-                    ref={(el) => { projectRefs.current["item-einstoffen"] = el; }}
-                    onClick={() => openProject(project, "item-einstoffen")}
-                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[16/10]"
-                  >
-                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                      <div className="w-full h-full flex items-stretch flip-source-el">
-                        <div className="w-[55%] relative overflow-hidden bg-black/5 border-r border-black">
-                          {coverImg && (
-                            <Image
-                              src={coverImg.url}
-                              alt={project.title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, 500px"
-                              className="object-cover grayscale contrast-125 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                            />
-                          )}
-                          <div className="absolute bottom-4 left-0 right-0 text-center z-10">
-                            <span className="font-display font-black text-white text-xl md:text-2xl tracking-wider uppercase">
-                              EINSTOFFEN
-                            </span>
-                          </div>
-                        </div>
-                        <div className="w-[45%] bg-[#0B0B0B] p-4 flex flex-col justify-between items-end">
-                          <div className="w-6 h-6 border border-white/20 rounded-sm flex items-center justify-center text-white/55 text-[10px] font-bold">
-                            R
-                          </div>
-                          <span className="text-[10px] text-white/30 font-mono">03:04</span>
-                        </div>
+            {/* Item 2: Rampant project */}
+            {(() => {
+              const project = projects.find(p => p.slug === "rampant-studio");
+              if (!project) return null;
+              const coverImg = project.images.find(img => img.isCover) || project.images[0];
+              const isHidden = hiddenCardId === "item-rampant";
+
+              return (
+                <div
+                  ref={(el) => { projectRefs.current["item-rampant"] = el; }}
+                  onClick={() => openProject(project, "item-rampant")}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
+                      {coverImg && (
+                        <Image
+                          src={coverImg.url}
+                          alt={project.title}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 300px"
+                          className="object-cover grayscale contrast-125 mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-[#E64A19]/30 pointer-events-none mix-blend-color"></div>
+                      <div className="absolute bottom-4 left-4 z-10">
+                        <h3 className="font-sans font-bold italic text-xl md:text-3xl text-white tracking-wide">
+                          Rampant
+                        </h3>
                       </div>
                     </div>
                   </div>
-                );
-              })()}
-
-              {/* Item 2: Three-pronged logo card */}
-              <div
-                className="w-full aspect-square bg-[#FFFFFF] border border-black p-8 flex flex-col justify-end items-start relative select-text"
-              >
-                <div className="flex flex-col gap-1.5 items-start w-20">
-                  <div className="h-2.5 w-16 bg-black"></div>
-                  <div className="h-2.5 w-20 bg-black"></div>
-                  <div className="h-2.5 w-10 bg-black"></div>
                 </div>
+              );
+            })()}
+
+            {/* Item 3: Alphabet poster card */}
+            <div className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black">
+              <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+                ABCDEFGHIKL<br />
+                MNÑOPQRSTUV<br />
+                WXYZ
               </div>
+              <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
+                014
+              </div>
+            </div>
 
-              {/* Item 3: Rampant project */}
-              {(() => {
-                const project = projects.find(p => p.slug === "rampant-studio");
-                if (!project) return null;
-                const coverImg = project.images.find(img => img.isCover) || project.images[0];
-                const isHidden = hiddenCardId === "item-rampant";
+            {/* Item 4: Brand Identity MM26 project */}
+            {(() => {
+              const project = projects.find(p => p.slug === "brand-identity-mm26");
+              if (!project) return null;
+              const isHidden = hiddenCardId === "item-brand-identity-mm26";
 
-                return (
-                  <div
-                    ref={(el) => { projectRefs.current["item-rampant"] = el; }}
-                    onClick={() => openProject(project, "item-rampant")}
-                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
-                  >
-                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                      <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
+              return (
+                <div
+                  ref={(el) => { projectRefs.current["item-brand-identity-mm26"] = el; }}
+                  onClick={() => openProject(project, "item-brand-identity-mm26")}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[8px] md:text-[10px] font-bold text-black/60 uppercase">IDENTITY</span>
+                        <span className="text-[8px] md:text-[10px] font-bold text-black/60 uppercase">MM26</span>
+                      </div>
+                      <div className="flex flex-col gap-2.5 w-full items-stretch">
+                        <div className="h-2 bg-black"></div>
+                        <div className="h-2 bg-black"></div>
+                        <div className="h-2 bg-black"></div>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <span className="text-[7px] md:text-[8px] font-mono text-black/40">BRAND SYSTEM</span>
+                        <span className="text-[8px] md:text-[9px] font-sans font-black text-black">© BRIGANTI</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ROW 2: Einstoffen, Coleção, Arca Logo, Macbeth */}
+            
+            {/* Item 5: Einstoffen project */}
+            {(() => {
+              const project = projects.find(p => p.slug === "einstoffen");
+              if (!project) return null;
+              const coverImg = project.images.find(img => img.isCover) || project.images[0];
+              const isHidden = hiddenCardId === "item-einstoffen";
+
+              return (
+                <div
+                  ref={(el) => { projectRefs.current["item-einstoffen"] = el; }}
+                  onClick={() => openProject(project, "item-einstoffen")}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] md:aspect-[16/10]"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full flex items-stretch flip-source-el">
+                      <div className="w-[55%] relative overflow-hidden bg-black/5 border-r border-black">
                         {coverImg && (
                           <Image
                             src={coverImg.url}
                             alt={project.title}
                             fill
-                            sizes="(max-width: 768px) 100vw, 500px"
-                            className="object-cover grayscale contrast-125 mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                            sizes="(max-width: 768px) 50vw, 300px"
+                            className="object-cover grayscale contrast-125 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                           />
                         )}
-                        <div className="absolute inset-0 bg-[#E64A19]/30 pointer-events-none mix-blend-color"></div>
-                        <div className="absolute bottom-6 left-6 z-10">
-                          <h3 className="font-sans font-bold italic text-3xl text-white tracking-wide">
-                            Rampant
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-
-            </div>
-
-            {/* RIGHT COLUMN (Shifted down relative to left column to create masonry pattern) */}
-            <div className="flex flex-col gap-16 md:gap-24 md:pt-32">
-              
-              {/* Item 4: Coleção project */}
-              {(() => {
-                const project = projects.find(p => p.slug === "colecao");
-                if (!project) return null;
-                const coverImg = project.images.find(img => img.isCover) || project.images[0];
-                const isHidden = hiddenCardId === "item-colecao";
-
-                return (
-                  <div
-                    ref={(el) => { projectRefs.current["item-colecao"] = el; }}
-                    onClick={() => openProject(project, "item-colecao")}
-                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
-                  >
-                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                      <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
-                        {coverImg && (
-                          <Image
-                            src={coverImg.url}
-                            alt={project.title}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 500px"
-                            className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                          />
-                        )}
-                        <div className="absolute top-8 left-0 right-0 flex flex-col items-center justify-start z-10 pointer-events-none select-none">
-                          <span className="text-[8px] font-bold text-black uppercase tracking-[0.2em] mb-1">
-                            AB &nbsp; &nbsp; &nbsp; SETIMA &nbsp; &nbsp; &nbsp; AB &nbsp; &nbsp; &nbsp; SETIMA
+                        <div className="absolute bottom-2 md:bottom-4 left-0 right-0 text-center z-10">
+                          <span className="font-display font-black text-white text-base md:text-xl tracking-wider uppercase">
+                            EINSTOFFEN
                           </span>
-                          <h3 className="font-display font-black text-6xl tracking-tight leading-none text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                            OLEÇÃO
-                          </h3>
                         </div>
+                      </div>
+                      <div className="w-[45%] bg-[#0B0B0B] p-2.5 md:p-4 flex flex-col justify-between items-end">
+                        <div className="w-5 h-5 md:w-6 md:h-6 border border-white/20 rounded-sm flex items-center justify-center text-white/55 text-[8px] md:text-[10px] font-bold">
+                          R
+                        </div>
+                        <span className="text-[8px] md:text-[10px] text-white/30 font-mono">03:04</span>
                       </div>
                     </div>
                   </div>
-                );
-              })()}
-
-              {/* Item 5: AB Arca logo project */}
-              {(() => {
-                const project = projects.find(p => p.slug === "ab-arca");
-                if (!project) return null;
-                const isHidden = hiddenCardId === "item-arca-logo";
-
-                return (
-                  <div
-                    ref={(el) => { projectRefs.current["item-arca-logo"] = el; }}
-                    onClick={() => openProject(project, "item-arca-logo")}
-                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3]"
-                  >
-                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                      <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
-                        <div className="flex justify-between items-start">
-                          <span className="text-[10px] font-bold text-white/50">AB</span>
-                          <span className="text-[10px] font-bold text-white/50">ARCA</span>
-                        </div>
-                        <div className="my-auto flex justify-center items-center">
-                          <svg className="w-16 h-16 text-[#D4E157]" viewBox="0 0 100 100" fill="currentColor">
-                            <path d="M20 20 h35 a25 25 0 0 1 0 50 h-10 l15 20 h-20 l-13 -20 h-7 v20 h-15 z M35 35 v18 h15 a9 9 0 0 0 0 -18 z" />
-                          </svg>
-                        </div>
-                        <div className="flex justify-between items-end">
-                          <span className="text-[9px] font-mono text-white/40">TYPE DESIGN</span>
-                          <span className="text-[9px] font-mono text-white/40">MM24</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Item 6: Alphabet poster card */}
-              <div
-                className="w-full aspect-square bg-[#000000] p-6 flex flex-col justify-center items-start border border-black"
-              >
-                <div className="font-display font-black text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
-                  ABCDEFGHIKL<br />
-                  MNÑOPQRSTUV<br />
-                  WXYZ
                 </div>
-              </div>
+              );
+            })()}
 
-              {/* Item 7: Macbeth project */}
-              {(() => {
-                const project = projects.find(p => p.slug === "macbeth");
-                if (!project) return null;
-                const isHidden = hiddenCardId === "item-macbeth";
+            {/* Item 6: Coleção project */}
+            {(() => {
+              const project = projects.find(p => p.slug === "colecao");
+              if (!project) return null;
+              const coverImg = project.images.find(img => img.isCover) || project.images[0];
+              const isHidden = hiddenCardId === "item-colecao";
 
-                return (
-                  <div
-                    ref={(el) => { projectRefs.current["item-macbeth"] = el; }}
-                    onClick={() => openProject(project, "item-macbeth")}
-                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
-                  >
-                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                      <div className="w-full h-full bg-white flex flex-col justify-between p-6 flip-source-el border border-black">
-                        <div>
-                          <span className="font-display font-black text-[9px] text-red-600 uppercase tracking-widest block mb-2 leading-none">
-                            THE TRAGEDY OF
-                          </span>
-                          <h4 className="font-sans font-black text-3xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
-                            AaBb<br />
-                            CcDd<br />
-                            0123<br />
-                            <span className="text-red-600">MACBETH</span>
-                          </h4>
-                        </div>
-                        <div>
-                          <span className="font-sans font-bold text-[9px] text-red-600 block uppercase leading-none mb-1">
-                            BY WILLIAM
-                          </span>
-                          <span className="font-sans font-black text-xl text-black block uppercase leading-none tracking-tighter">
-                            SHAKESPEARE
-                          </span>
-                          <span className="font-sans font-bold text-[8px] text-black/60 uppercase mt-2 block">
-                            NATIONAL THEATER
-                          </span>
-                        </div>
+              return (
+                <div
+                  ref={(el) => { projectRefs.current["item-colecao"] = el; }}
+                  onClick={() => openProject(project, "item-colecao")}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                      {coverImg && (
+                        <Image
+                          src={coverImg.url}
+                          alt={project.title}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 300px"
+                          className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                        />
+                      )}
+                      <div className="absolute top-6 md:top-10 left-0 right-0 flex flex-col items-center justify-start z-10 pointer-events-none select-none">
+                        <span className="text-[6px] md:text-[8px] font-bold text-black uppercase tracking-[0.2em] mb-1">
+                          AB &nbsp; &nbsp; &nbsp; SETIMA &nbsp; &nbsp; &nbsp; AB &nbsp; &nbsp; &nbsp; SETIMA
+                        </span>
+                        <h3 className="font-display font-black text-4xl md:text-6xl tracking-tight leading-none text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                          OLEÇÃO
+                        </h3>
                       </div>
                     </div>
                   </div>
-                );
-              })()}
+                </div>
+              );
+            })()}
 
-              {/* Item 8: Brand Identity MM26 project */}
-              {(() => {
-                const project = projects.find(p => p.slug === "brand-identity-mm26");
-                if (!project) return null;
-                const isHidden = hiddenCardId === "item-brand-identity-mm26";
+            {/* Item 7: AB Arca logo project */}
+            {(() => {
+              const project = projects.find(p => p.slug === "ab-arca");
+              if (!project) return null;
+              const isHidden = hiddenCardId === "item-arca-logo";
 
-                return (
-                  <div
-                    ref={(el) => { projectRefs.current["item-brand-identity-mm26"] = el; }}
-                    onClick={() => openProject(project, "item-brand-identity-mm26")}
-                    className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/2]"
-                  >
-                    <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                      <div className="w-full h-full bg-white flex flex-col justify-between p-6 flip-source-el">
-                        <div className="flex justify-between items-start">
-                          <span className="text-[10px] font-bold text-black/60 uppercase">IDENTITY</span>
-                          <span className="text-[10px] font-bold text-black/60 uppercase">MM26</span>
-                        </div>
-                        <div className="flex flex-col gap-3.5 w-full items-stretch">
-                          <div className="h-3 bg-black"></div>
-                          <div className="h-3 bg-black"></div>
-                          <div className="h-3 bg-black"></div>
-                        </div>
-                        <div className="flex justify-between items-end">
-                          <span className="text-[8px] font-mono text-black/40">BRAND SYSTEM</span>
-                          <span className="text-[9px] font-sans font-black text-black">© BRIGANTI</span>
-                        </div>
+              return (
+                <div
+                  ref={(el) => { projectRefs.current["item-arca-logo"] = el; }}
+                  onClick={() => openProject(project, "item-arca-logo")}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3]"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[8px] md:text-[10px] font-bold text-white/50">AB</span>
+                        <span className="text-[8px] md:text-[10px] font-bold text-white/50">ARCA</span>
+                      </div>
+                      <div className="my-auto flex justify-center items-center">
+                        <svg className="w-12 h-12 md:w-16 md:h-16 text-[#D4E157]" viewBox="0 0 100 100" fill="currentColor">
+                          <path d="M20 20 h35 a25 25 0 0 1 0 50 h-10 l15 20 h-20 l-13 -20 h-7 v20 h-15 z M35 35 v18 h15 a9 9 0 0 0 0 -18 z" />
+                        </svg>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <span className="text-[8px] md:text-[9px] font-mono text-white/40">TYPE DESIGN</span>
+                        <span className="text-[8px] md:text-[9px] font-mono text-white/40">MM24</span>
                       </div>
                     </div>
                   </div>
-                );
-              })()}
+                </div>
+              );
+            })()}
 
-            </div>
+            {/* Item 8: Macbeth project */}
+            {(() => {
+              const project = projects.find(p => p.slug === "macbeth");
+              if (!project) return null;
+              const isHidden = hiddenCardId === "item-macbeth";
+
+              return (
+                <div
+                  ref={(el) => { projectRefs.current["item-macbeth"] = el; }}
+                  onClick={() => openProject(project, "item-macbeth")}
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                >
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                    <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el border border-black">
+                      <div>
+                        <span className="font-display font-black text-[7px] md:text-[9px] text-red-600 uppercase tracking-widest block mb-1 leading-none">
+                          THE TRAGEDY OF
+                        </span>
+                        <h4 className="font-sans font-black text-2xl md:text-3xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
+                          AaBb<br />
+                          CcDd<br />
+                          0123<br />
+                          <span className="text-red-600">MACBETH</span>
+                        </h4>
+                      </div>
+                      <div>
+                        <span className="font-sans font-bold text-[7px] md:text-[9px] text-red-600 block uppercase leading-none mb-0.5">
+                          BY WILLIAM
+                        </span>
+                        <span className="font-sans font-black text-base md:text-lg text-black block uppercase leading-none tracking-tighter">
+                          SHAKESPEARE
+                        </span>
+                        <span className="font-sans font-bold text-[7px] md:text-[8px] text-black/60 uppercase mt-2 block">
+                          NATIONAL THEATER
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
           </div>
         </main>
