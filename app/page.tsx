@@ -37,27 +37,26 @@ export default function HomePage() {
         const res = await fetch("/api/projects");
         const data = await res.json();
         if (data.projects) {
-          // Set opacity 0 initially on all interactive cards to prevent flash/appearing suddenly
-          gsap.set(".project-card-interactive", { opacity: 0, y: 150 });
+          // Keep all cards fully visible but reveal blocks covered initially
           setProjects(data.projects);
           
-          // Animate cards entrance sequentially (staggered stack delay)
+          // Animate the black block covers sliding down to reveal the image/card underneath
           setTimeout(() => {
-            gsap.to(
-              ".project-card-interactive",
-              { 
-                opacity: 1, 
-                y: 0, 
-                duration: 1.6, 
+            gsap.fromTo(
+              ".project-card-reveal-block",
+              { scaleY: 1 },
+              {
+                scaleY: 0,
+                duration: 1.4,
                 stagger: {
-                  amount: 0.8,
+                  amount: 0.9,
                   grid: "auto",
                   from: "start"
-                }, 
-                ease: "power4.out" 
+                },
+                ease: "power4.inOut"
               }
             );
-          }, 100);
+          }, 300);
         }
       } catch (err) {
         console.error("Error fetching projects:", err);
@@ -299,7 +298,7 @@ export default function HomePage() {
                   key={itemId}
                   ref={(el) => { projectRefs.current[itemId] = el; }}
                   onClick={() => openProject(project, itemId)}
-                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square"
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square relative"
                 >
                   <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                     <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
@@ -312,6 +311,8 @@ export default function HomePage() {
                       />
                     </div>
                   </div>
+                  {/* Brutalist Block Reveal Cover */}
+                  <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
                 </div>
               );
             }
@@ -321,7 +322,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => project && openProject(project, itemId)}
-                className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none project-card-interactive"
+                className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none project-card-interactive overflow-hidden"
               >
                 {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
                 <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
@@ -332,6 +333,8 @@ export default function HomePage() {
                   <path d="M30 65 C40 60, 48 55, 50 50 C48 55, 40 60, 30 65 Z" stroke="currentColor" strokeWidth="3" />
                   <path d="M70 65 C60 60, 52 55, 50 50 C52 55, 60 60, 70 65 Z" stroke="currentColor" strokeWidth="3" />
                 </svg>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -349,7 +352,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] md:aspect-[16/10]"
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] md:aspect-[16/10] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full flex items-stretch flip-source-el">
@@ -377,6 +380,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -397,7 +402,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
@@ -418,6 +423,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -435,7 +442,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
@@ -458,6 +465,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -478,7 +487,7 @@ export default function HomePage() {
                   key={itemId}
                   ref={(el) => { projectRefs.current[itemId] = el; }}
                   onClick={() => openProject(project, itemId)}
-                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
                 >
                   <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                     <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
@@ -491,6 +500,8 @@ export default function HomePage() {
                       />
                     </div>
                   </div>
+                  {/* Brutalist Block Reveal Cover */}
+                  <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
                 </div>
               );
             }
@@ -498,7 +509,7 @@ export default function HomePage() {
             return (
               <div
                 key={itemId}
-                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black project-card-interactive"
+                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black project-card-interactive relative overflow-hidden"
               >
                 <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
                   ABCDEFGHIKL<br />
@@ -508,6 +519,8 @@ export default function HomePage() {
                 <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
                   014
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -524,7 +537,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3]"
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
@@ -543,6 +556,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -562,7 +577,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square"
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
@@ -581,6 +596,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
@@ -597,7 +614,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4]"
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el border border-black">
@@ -625,6 +642,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
             );
           })()}
