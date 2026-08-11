@@ -147,11 +147,11 @@ const DEFAULT_PROJECTS: ProjectData[] = [
   }
 ];
 
-// Default hashed admin: "admin" / "admin123"
+// Default hashed admin: "matsganz@gmail.com" / "Rahmat123!"
 const DEFAULT_ADMIN: AdminData = {
   id: "admin-1",
-  username: "admin",
-  passwordHash: "$2a$10$9s6/G.7gW5n7c.9mF6k3eeR30k/6.u0f8fH3dG5Z78mKq1Q/yWcOi" // bcrypt for admin123
+  username: "matsganz@gmail.com",
+  passwordHash: "$2a$10$lqodWUHP/rThIHR15Cq.Len3Q2F5YVccZbo5Aw8gupMADRoEdS7Na" // bcrypt for Rahmat123!
 };
 
 function readJsonDb(): { projects: ProjectData[]; admins: AdminData[] } {
@@ -306,9 +306,24 @@ export async function deleteProject(id: string): Promise<boolean> {
 export async function getAdminByUsername(username: string): Promise<AdminData | null> {
   if (prisma && isPrismaEnabled) {
     try {
-      const admin = await prisma.admin.findUnique({
+      let admin = await prisma.admin.findUnique({
         where: { username }
       });
+      
+      // Auto-seed admin if database is connected but no admin user exists yet
+      if (!admin && username === "matsganz@gmail.com") {
+        try {
+          admin = await prisma.admin.create({
+            data: {
+              username: "matsganz@gmail.com",
+              password: "$2a$10$lqodWUHP/rThIHR15Cq.Len3Q2F5YVccZbo5Aw8gupMADRoEdS7Na" // bcrypt for Rahmat123!
+            }
+          });
+        } catch (createErr) {
+          console.error("Auto-seeding admin failed:", createErr);
+        }
+      }
+
       if (admin) {
         return {
           id: admin.id,

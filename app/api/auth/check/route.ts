@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const decoded = jwt.verify(tokenCookie.value, JWT_SECRET);
-    if (decoded && typeof decoded === "object" && decoded.username === "admin") {
+    if (decoded && typeof decoded === "object" && decoded.username === "matsganz@gmail.com") {
       return NextResponse.json({ authenticated: true });
     }
     return NextResponse.json({ authenticated: false }, { status: 401 });

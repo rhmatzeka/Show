@@ -104,8 +104,8 @@
   "admins": [
     {
       "id": "admin-1",
-      "username": "admin",
-      "passwordHash": "$2a$10$9s6/G.7gW5n7c.9mF6k3eeR30k/6.u0f8fH3dG5Z78mKq1Q/yWcOi"
+      "username": "matsganz@gmail.com",
+      "passwordHash": "$2a$10$lqodWUHP/rThIHR15Cq.Len3Q2F5YVccZbo5Aw8gupMADRoEdS7Na"
     }
   ]
 }

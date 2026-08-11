@@ -12,7 +12,7 @@ function verifyAdmin(request: NextRequest): boolean {
   if (!tokenCookie) return false;
   try {
     const decoded = jwt.verify(tokenCookie.value, JWT_SECRET);
-    return !!(decoded && typeof decoded === "object" && decoded.username === "admin");
+    return !!(decoded && typeof decoded === "object" && decoded.username === "matsganz@gmail.com");
   } catch (err) {
     return false;
   }
