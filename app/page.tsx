@@ -317,12 +317,12 @@ export default function HomePage() {
 
             if (project && coverImg) {
               return (
-              <div
-                key={itemId}
-                ref={(el) => { projectRefs.current[itemId] = el; }}
-                onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square relative"
-              >
+                <div
+                  key={itemId}
+                  ref={(el) => { projectRefs.current[itemId] = el; }}
+                  onClick={() => openProject(project, itemId)}
+                  className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-square relative"
+                >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
                     <Image
@@ -345,7 +345,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => project && openProject(project, itemId)}
-                className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none project-card-interactive overflow-hidden"
+                className="w-full aspect-square bg-[#FFFFFF] p-6 flex flex-col justify-center items-center relative select-none project-card-interactive overflow-hidden"
               >
                 {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
                 <div className="project-card-interactive-content flex flex-col justify-center items-center w-full h-full">
@@ -377,11 +377,11 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] md:aspect-[16/10] relative"
+                className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[4/3] md:aspect-[16/10] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full flex items-stretch flip-source-el">
-                    <div className="w-[55%] relative overflow-hidden bg-black/5 border-r border-black">
+                    <div className="w-[55%] relative overflow-hidden bg-black/5">
                       {coverImg && (
                         <Image
                           src={coverImg.url}
@@ -427,7 +427,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
+                className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[3/4] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
@@ -467,7 +467,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
+                className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[3/4] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
@@ -512,7 +512,7 @@ export default function HomePage() {
                   key={itemId}
                   ref={(el) => { projectRefs.current[itemId] = el; }}
                   onClick={() => openProject(project, itemId)}
-                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
+                  className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[3/4] relative"
                 >
                   <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                     <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
@@ -534,7 +534,7 @@ export default function HomePage() {
             return (
               <div
                 key={itemId}
-                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start border border-black project-card-interactive relative overflow-hidden"
+                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start project-card-interactive relative overflow-hidden"
               >
                 <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
                   ABCDEFGHIKL<br />
@@ -562,9 +562,9 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] relative"
+                className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[4/3] relative"
               >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
                     <div className="flex justify-between items-start">
                       <span className="text-[8px] md:text-[10px] font-bold text-white/50">AB</span>
@@ -602,7 +602,7 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square relative"
+                className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-square relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
@@ -639,10 +639,10 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => openProject(project, itemId)}
-                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
+                className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[3/4] relative"
               >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                  <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el border border-black">
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                  <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
                     <div>
                       <span className="font-display font-black text-[7px] md:text-[9px] text-red-600 uppercase tracking-widest block mb-1 leading-none">
                         THE TRAGEDY OF
