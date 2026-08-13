@@ -554,6 +554,7 @@ export default function HomePage() {
           {(() => {
             const project = projects.find(p => p.slug === "ab-arca");
             if (!project) return null;
+            const coverImg = project.images.find(img => img.isCover) || project.images[0];
             const itemId = `item-arca-logo-${setId}`;
             const isHidden = hiddenCardId === itemId;
 
@@ -565,21 +566,33 @@ export default function HomePage() {
                 className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[4/3] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                  <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[8px] md:text-[10px] font-bold text-white/50">AB</span>
-                      <span className="text-[8px] md:text-[10px] font-bold text-white/50">ARCA</span>
+                  {coverImg ? (
+                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                      <Image
+                        src={coverImg.url}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
                     </div>
-                    <div className="my-auto flex justify-center items-center">
-                      <svg className="w-12 h-12 md:w-16 md:h-16 text-[#D4E157]" viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M20 20 h35 a25 25 0 0 1 0 50 h-10 l15 20 h-20 l-13 -20 h-7 v20 h-15 z M35 35 v18 h15 a9 9 0 0 0 0 -18 z" />
-                      </svg>
+                  ) : (
+                    <div className="w-full h-full bg-[#0B0B0B] flex flex-col justify-between p-4 flip-source-el">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[8px] md:text-[10px] font-bold text-white/50">AB</span>
+                        <span className="text-[8px] md:text-[10px] font-bold text-white/50">ARCA</span>
+                      </div>
+                      <div className="my-auto flex justify-center items-center">
+                        <svg className="w-12 h-12 md:w-16 md:h-16 text-[#D4E157]" viewBox="0 0 100 100" fill="currentColor">
+                          <path d="M20 20 h35 a25 25 0 0 1 0 50 h-10 l15 20 h-20 l-13 -20 h-7 v20 h-15 z M35 35 v18 h15 a9 9 0 0 0 0 -18 z" />
+                        </svg>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <span className="text-[8px] md:text-[9px] font-mono text-white/40">TYPE DESIGN</span>
+                        <span className="text-[8px] md:text-[9px] font-mono text-white/40">MM24</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-end">
-                      <span className="text-[8px] md:text-[9px] font-mono text-white/40">TYPE DESIGN</span>
-                      <span className="text-[8px] md:text-[9px] font-mono text-white/40">MM24</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
                 {/* Brutalist Block Reveal Cover */}
                 <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
@@ -594,6 +607,7 @@ export default function HomePage() {
           {(() => {
             const project = projects.find(p => p.slug === "brand-identity-mm26");
             if (!project) return null;
+            const coverImg = project.images.find(img => img.isCover) || project.images[0];
             const itemId = `item-brand-identity-mm26-${setId}`;
             const isHidden = hiddenCardId === itemId;
 
@@ -604,22 +618,34 @@ export default function HomePage() {
                 onClick={() => openProject(project, itemId)}
                 className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-square relative"
               >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                  <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[8px] md:text-[10px] font-bold text-black/60 uppercase">IDENTITY</span>
-                      <span className="text-[8px] md:text-[10px] font-bold text-black/60 uppercase">MM26</span>
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                  {coverImg ? (
+                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                      <Image
+                        src={coverImg.url}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
                     </div>
-                    <div className="flex flex-col gap-2.5 w-full items-stretch">
-                      <div className="h-2 bg-black"></div>
-                      <div className="h-2 bg-black"></div>
-                      <div className="h-2 bg-black"></div>
+                  ) : (
+                    <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[8px] md:text-[10px] font-bold text-black/60 uppercase">IDENTITY</span>
+                        <span className="text-[8px] md:text-[10px] font-bold text-black/60 uppercase">MM26</span>
+                      </div>
+                      <div className="flex flex-col gap-2.5 w-full items-stretch">
+                        <div className="h-2 bg-black"></div>
+                        <div className="h-2 bg-black"></div>
+                        <div className="h-2 bg-black"></div>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <span className="text-[7px] md:text-[8px] font-mono text-black/40">BRAND SYSTEM</span>
+                        <span className="text-[8px] md:text-[9px] font-sans font-black text-black">© RAHMAT</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-end">
-                      <span className="text-[7px] md:text-[8px] font-mono text-black/40">BRAND SYSTEM</span>
-                      <span className="text-[8px] md:text-[9px] font-sans font-black text-black">© RAHMAT</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
                 {/* Brutalist Block Reveal Cover */}
                 <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
@@ -631,6 +657,7 @@ export default function HomePage() {
           {(() => {
             const project = projects.find(p => p.slug === "macbeth");
             if (!project) return null;
+            const coverImg = project.images.find(img => img.isCover) || project.images[0];
             const itemId = `item-macbeth-${setId}`;
             const isHidden = hiddenCardId === itemId;
 
@@ -642,30 +669,42 @@ export default function HomePage() {
                 className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-[3/4] relative"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                  <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
-                    <div>
-                      <span className="font-display font-black text-[7px] md:text-[9px] text-red-600 uppercase tracking-widest block mb-1 leading-none">
-                        THE TRAGEDY OF
-                      </span>
-                      <h4 className="font-sans font-black text-2xl md:text-3xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
-                        AaBb<br />
-                        CcDd<br />
-                        0123<br />
-                        <span className="text-red-600">MACBETH</span>
-                      </h4>
+                  {coverImg ? (
+                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                      <Image
+                        src={coverImg.url}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 300px"
+                        className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
                     </div>
-                    <div>
-                      <span className="font-sans font-bold text-[7px] md:text-[9px] text-red-600 block uppercase leading-none mb-0.5">
-                        BY WILLIAM
-                      </span>
-                      <span className="font-sans font-black text-base md:text-lg text-black block uppercase leading-none tracking-tighter">
-                        SHAKESPEARE
-                      </span>
-                      <span className="font-sans font-bold text-[7px] md:text-[8px] text-black/60 uppercase mt-2 block">
-                        NATIONAL THEATER
-                      </span>
+                  ) : (
+                    <div className="w-full h-full bg-white flex flex-col justify-between p-4 md:p-6 flip-source-el">
+                      <div>
+                        <span className="font-display font-black text-[7px] md:text-[9px] text-red-600 uppercase tracking-widest block mb-1 leading-none">
+                          THE TRAGEDY OF
+                        </span>
+                        <h4 className="font-sans font-black text-2xl md:text-3xl leading-[0.85] text-black tracking-tight font-stretch-ultra-condensed select-text">
+                          AaBb<br />
+                          CcDd<br />
+                          0123<br />
+                          <span className="text-red-600">MACBETH</span>
+                        </h4>
+                      </div>
+                      <div>
+                        <span className="font-sans font-bold text-[7px] md:text-[9px] text-red-600 block uppercase leading-none mb-0.5">
+                          BY WILLIAM
+                        </span>
+                        <span className="font-sans font-black text-base md:text-lg text-black block uppercase leading-none tracking-tighter">
+                          SHAKESPEARE
+                        </span>
+                        <span className="font-sans font-bold text-[7px] md:text-[8px] text-black/60 uppercase mt-2 block">
+                          NATIONAL THEATER
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 {/* Brutalist Block Reveal Cover */}
                 <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
