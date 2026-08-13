@@ -719,7 +719,7 @@ export default function HomePage() {
   return (
     <div className="w-screen h-screen overflow-hidden relative bg-transparent select-none">
       {/* 1. Minimal Header (TRANSPARENT background to let cards go underneath) */}
-      <header className="fixed top-0 left-0 right-0 h-16 flex justify-between items-center px-6 md:px-12 bg-transparent z-40">
+      <header className="fixed top-0 left-0 right-0 h-16 flex justify-between items-center px-6 md:px-12 bg-transparent z-40 mix-blend-difference text-white">
         <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2">
           <span>Selection</span>
         </div>
