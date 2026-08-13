@@ -37,11 +37,12 @@ export default function HomePage() {
         const res = await fetch("/api/projects");
         const data = await res.json();
         if (data.projects) {
-          // Hide actual card contents (except the black reveal cover blocks) initially to prevent flashing
-          gsap.set(".project-card-interactive > :not(.project-card-reveal-block)", { opacity: 0 });
           setProjects(data.projects);
           
-          setTimeout(() => {
+          // Set initial state on the next frame to guarantee CSS layout has resolved
+          requestAnimationFrame(() => {
+            gsap.set(".project-card-interactive-content", { opacity: 0 });
+            
             // 1. Black blocks slide up to cover the card area
             gsap.fromTo(
               ".project-card-reveal-block",
@@ -57,7 +58,7 @@ export default function HomePage() {
                 ease: "power3.out",
                 onComplete: () => {
                   // Make actual card contents visible only after covered by the blocks
-                  gsap.set(".project-card-interactive > :not(.project-card-reveal-block)", { opacity: 1 });
+                  gsap.set(".project-card-interactive-content", { opacity: 1 });
                   
                   // 2. Black blocks slide down to reveal the images
                   gsap.to(
@@ -78,7 +79,7 @@ export default function HomePage() {
                 }
               }
             );
-          }, 300);
+          });
         }
       } catch (err) {
         console.error("Error fetching projects:", err);
@@ -316,26 +317,26 @@ export default function HomePage() {
 
             if (project && coverImg) {
               return (
-                <div
-                  key={itemId}
-                  ref={(el) => { projectRefs.current[itemId] = el; }}
-                  onClick={() => openProject(project, itemId)}
-                  className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square relative"
-                >
-                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                    <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
-                      <Image
-                        src={coverImg.url}
-                        alt={project.title}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 300px"
-                        className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                      />
-                    </div>
+              <div
+                key={itemId}
+                ref={(el) => { projectRefs.current[itemId] = el; }}
+                onClick={() => openProject(project, itemId)}
+                className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-square relative"
+              >
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                  <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
+                    <Image
+                      src={coverImg.url}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 300px"
+                      className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                    />
                   </div>
-                  {/* Brutalist Block Reveal Cover */}
-                  <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
                 </div>
+                {/* Brutalist Block Reveal Cover */}
+                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
+              </div>
               );
             }
 
@@ -347,14 +348,16 @@ export default function HomePage() {
                 className="w-full aspect-square bg-[#FFFFFF] border border-black p-6 flex flex-col justify-center items-center relative select-none project-card-interactive overflow-hidden"
               >
                 {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
-                <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
-                  <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
-                  <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
-                  <path d="M50 50 C50 20, 50 10, 50 5 C50 10, 50 20, 50 50 Z" stroke="currentColor" strokeWidth="4" />
-                  <path d="M50 50 C45 30, 50 20, 55 10 C50 20, 50 30, 50 50 Z" />
-                  <path d="M30 65 C40 60, 48 55, 50 50 C48 55, 40 60, 30 65 Z" stroke="currentColor" strokeWidth="3" />
-                  <path d="M70 65 C60 60, 52 55, 50 50 C52 55, 60 60, 70 65 Z" stroke="currentColor" strokeWidth="3" />
-                </svg>
+                <div className="project-card-interactive-content flex flex-col justify-center items-center w-full h-full">
+                  <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
+                    <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
+                    <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
+                    <path d="M50 50 C50 20, 50 10, 50 5 C50 10, 50 20, 50 50 Z" stroke="currentColor" strokeWidth="4" />
+                    <path d="M50 50 C45 30, 50 20, 55 10 C50 20, 50 30, 50 50 Z" />
+                    <path d="M30 65 C40 60, 48 55, 50 50 C48 55, 40 60, 30 65 Z" stroke="currentColor" strokeWidth="3" />
+                    <path d="M70 65 C60 60, 52 55, 50 50 C52 55, 60 60, 70 65 Z" stroke="currentColor" strokeWidth="3" />
+                  </svg>
+                </div>
                 {/* Brutalist Block Reveal Cover */}
                 <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
               </div>
@@ -376,7 +379,7 @@ export default function HomePage() {
                 onClick={() => openProject(project, itemId)}
                 className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[4/3] md:aspect-[16/10] relative"
               >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full flex items-stretch flip-source-el">
                     <div className="w-[55%] relative overflow-hidden bg-black/5 border-r border-black">
                       {coverImg && (
@@ -426,7 +429,7 @@ export default function HomePage() {
                 onClick={() => openProject(project, itemId)}
                 className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
               >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-red-600/30 mix-blend-multiply flip-source-el">
                     {coverImg && (
                       <Image
@@ -466,7 +469,7 @@ export default function HomePage() {
                 onClick={() => openProject(project, itemId)}
                 className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
               >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
                     {coverImg && (
                       <Image
@@ -511,7 +514,7 @@ export default function HomePage() {
                   onClick={() => openProject(project, itemId)}
                   className="border border-black bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm hover:border-black/70 transition-colors w-full aspect-[3/4] relative"
                 >
-                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                  <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
                     <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
                       <Image
                         src={coverImg.url}
