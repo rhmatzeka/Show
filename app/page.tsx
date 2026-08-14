@@ -109,12 +109,24 @@ export default function HomePage() {
     }
   }, [projects]);
 
+  // Smooth Scroll and Inertia properties
+  const targetScrollTop = useRef(0);
+  const currentScrollTop = useRef(0);
+  const isAnimatingScroll = useRef(false);
+
   // Seamless Infinite Vertical Scroll Loop handler
   const handleScroll = () => {
     const container = scrollContainerRef.current;
     if (!container || isDetailOpen || showInfo) return;
 
     const scrollTop = container.scrollTop;
+    
+    // Sync current values if the user manually drags the scrollbar
+    if (!isAnimatingScroll.current) {
+      targetScrollTop.current = scrollTop;
+      currentScrollTop.current = scrollTop;
+    }
+
     const setElements = container.querySelectorAll(".portfolio-set-row");
     if (setElements.length < 3) return;
 
@@ -124,12 +136,78 @@ export default function HomePage() {
     // Boundary check for scrolling down: when crossing into the 3rd set, teleport back to the 2nd set
     if (scrollTop >= spacerHeight + singleSetHeight * 2) {
       container.scrollTop = scrollTop - singleSetHeight;
+      targetScrollTop.current = container.scrollTop;
+      currentScrollTop.current = container.scrollTop;
     }
     // Boundary check for scrolling up: when crossing into the 1st set, teleport down to the 2nd set
     else if (scrollTop <= spacerHeight + singleSetHeight - 150) {
       container.scrollTop = scrollTop + singleSetHeight;
+      targetScrollTop.current = container.scrollTop;
+      currentScrollTop.current = container.scrollTop;
     }
   };
+
+  // Inertia scroll tick loop
+  useEffect(() => {
+    let animId: number;
+
+    const updateScroll = () => {
+      const container = scrollContainerRef.current;
+      if (container && !isDetailOpen && !showInfo) {
+        // Linear interpolation (lerp) for smooth dampening (higher divider = heavier scroll)
+        const diff = targetScrollTop.current - currentScrollTop.current;
+        if (Math.abs(diff) > 0.5) {
+          isAnimatingScroll.current = true;
+          // Lerp factor 0.075 makes it feel pleasantly heavy/weighted
+          currentScrollTop.current += diff * 0.075;
+          container.scrollTop = currentScrollTop.current;
+        } else {
+          isAnimatingScroll.current = false;
+        }
+      }
+      animId = requestAnimationFrame(updateScroll);
+    };
+
+    // Wheel event listener to intercept raw wheel scroll and apply custom inertia target
+    const handleWheel = (e: WheelEvent) => {
+      if (isDetailOpen || showInfo) return;
+      e.preventDefault();
+      // Accumulate wheel delta (multiply by 0.8 to reduce overall scrolling speed and make it heavier)
+      targetScrollTop.current += e.deltaY * 0.8;
+      
+      // Clamp boundaries to prevent scroll jumping outside the loop heights
+      const container = scrollContainerRef.current;
+      if (container) {
+        const setElements = container.querySelectorAll(".portfolio-set-row");
+        if (setElements.length >= 3) {
+          const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
+          const spacerHeight = 112;
+          const minScroll = spacerHeight + singleSetHeight - 149;
+          const maxScroll = spacerHeight + singleSetHeight * 2;
+          
+          if (targetScrollTop.current < minScroll) {
+            targetScrollTop.current = minScroll;
+          } else if (targetScrollTop.current > maxScroll) {
+            targetScrollTop.current = maxScroll;
+          }
+        }
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("wheel", handleWheel, { passive: false });
+    }
+
+    animId = requestAnimationFrame(updateScroll);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      if (container) {
+        container.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, [isDetailOpen, showInfo, projects]);
 
   // Open project detail with FLIP transition
   const openProject = (project: ProjectData, itemId: string) => {
