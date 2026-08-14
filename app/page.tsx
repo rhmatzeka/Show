@@ -1158,7 +1158,7 @@ export default function HomePage() {
       {activeOverlay && (
         <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto w-screen h-screen">
           {/* Main Content Node */}
-          <div className="w-full min-h-screen p-6 md:p-12 pb-20 md:pb-12 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
+          <div className="w-full min-h-screen p-6 md:p-12 pb-24 md:pb-16 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
             {/* Header row */}
             <div className="flex justify-between items-center pb-4 border-b border-black">
               <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
@@ -1227,7 +1227,7 @@ export default function HomePage() {
                 </div>
               </div>
             ) : (
-              <div className="max-w-md mx-auto w-full my-auto py-12 space-y-6">
+              <div className="max-w-xl mx-auto w-full my-auto py-12 space-y-6">
                 <h1 className="text-3xl md:text-4xl font-black font-display uppercase tracking-tight leading-none text-center">
                   CONTACT@RAHMATEKA
                 </h1>
@@ -1239,47 +1239,47 @@ export default function HomePage() {
                 <div className="space-y-3 font-sans text-xs md:text-sm pt-6 border-t border-black">
                   <a 
                     href="mailto:matsganz@gmail.com"
-                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">Email</span>
-                    <span className="font-medium font-mono text-xs">matsganz@gmail.com</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">matsganz@gmail.com</span>
                   </a>
 
                   <a 
                     href="https://instagram.com/rhmat.dev"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">Instagram</span>
-                    <span className="font-medium font-mono text-xs">@rhmat.dev</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">@rhmat.dev</span>
                   </a>
 
                   <a 
                     href="https://github.com/rhmatzeka"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">GitHub</span>
-                    <span className="font-medium font-mono text-xs">@rhmatzeka</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">@rhmatzeka</span>
                   </a>
 
                   <a 
                     href="https://t.me/luwakwhitecofeee"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">Telegram</span>
-                    <span className="font-medium font-mono text-xs">@luwakwhitecofeee</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">@luwakwhitecofeee</span>
                   </a>
                 </div>
               </div>
             )}
 
             {/* Footer row */}
-            <div className="flex justify-between items-center pt-4 border-t border-black">
+            <div className="flex justify-between items-center pt-4 border-t border-black mt-8 md:mt-0">
               <span className="font-sans font-bold text-[9px] md:text-xs uppercase tracking-wider text-black/60">
                 MM26.1.1 — © RAHMAT EKA
               </span>
