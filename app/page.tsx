@@ -710,16 +710,18 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => project && openProject(project, itemId)}
-                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start project-card-interactive relative overflow-hidden group cursor-pointer"
+                className="w-full aspect-[3/4] bg-white p-6 flex flex-col justify-between items-start project-card-interactive relative overflow-hidden group cursor-pointer"
               >
                 <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                  <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
-                    ABCDEFGHIKL<br />
-                    MNÑOPQRSTUV<br />
-                    WXYZ
-                  </div>
-                  <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
-                    014
+                  <div className="w-full h-full bg-[#000000] p-6 flex flex-col justify-between items-start">
+                    <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+                      ABCDEFGHIKL<br />
+                      MNÑOPQRSTUV<br />
+                      WXYZ
+                    </div>
+                    <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
+                      014
+                    </div>
                   </div>
                 </div>
                 {/* Brutalist Block Reveal Cover */}
