@@ -158,8 +158,8 @@ export default function HomePage() {
         const diff = targetScrollTop.current - currentScrollTop.current;
         if (Math.abs(diff) > 0.5) {
           isAnimatingScroll.current = true;
-          // Lerp factor 0.075 makes it feel pleasantly heavy/weighted
-          currentScrollTop.current += diff * 0.075;
+          // Lerp factor 0.065 makes it feel pleasantly heavy/weighted on both Desktop and Mobile touch
+          currentScrollTop.current += diff * 0.065;
           container.scrollTop = currentScrollTop.current;
         } else {
           isAnimatingScroll.current = false;
@@ -172,31 +172,34 @@ export default function HomePage() {
     const handleWheel = (e: WheelEvent) => {
       if (isDetailOpen || showInfo) return;
       e.preventDefault();
-      // Accumulate wheel delta (multiply by 0.8 to reduce overall scrolling speed and make it heavier)
-      targetScrollTop.current += e.deltaY * 0.8;
-      
-      // Clamp boundaries to prevent scroll jumping outside the loop heights
-      const container = scrollContainerRef.current;
-      if (container) {
-        const setElements = container.querySelectorAll(".portfolio-set-row");
-        if (setElements.length >= 3) {
-          const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
-          const spacerHeight = 112;
-          const minScroll = spacerHeight + singleSetHeight - 149;
-          const maxScroll = spacerHeight + singleSetHeight * 2;
-          
-          if (targetScrollTop.current < minScroll) {
-            targetScrollTop.current = minScroll;
-          } else if (targetScrollTop.current > maxScroll) {
-            targetScrollTop.current = maxScroll;
-          }
-        }
-      }
+      // Accumulate wheel delta (multiply by 0.65 to make scroll heavier)
+      targetScrollTop.current += e.deltaY * 0.65;
+    };
+
+    // Touch event listener to bring weighted heavy scrolling to mobile screens
+    let startY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      if (isDetailOpen || showInfo) return;
+      startY = e.touches[0].pageY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isDetailOpen || showInfo) return;
+      e.preventDefault();
+      const currentY = e.touches[0].pageY;
+      // Calculate delta movement
+      const deltaY = startY - currentY;
+      startY = currentY;
+
+      // Multiply touch delta by 0.6 to make mobile drag feel heavy
+      targetScrollTop.current += deltaY * 0.6;
     };
 
     const container = scrollContainerRef.current;
     if (container) {
       container.addEventListener("wheel", handleWheel, { passive: false });
+      container.addEventListener("touchstart", handleTouchStart, { passive: true });
+      container.addEventListener("touchmove", handleTouchMove, { passive: false });
     }
 
     animId = requestAnimationFrame(updateScroll);
@@ -205,6 +208,8 @@ export default function HomePage() {
       cancelAnimationFrame(animId);
       if (container) {
         container.removeEventListener("wheel", handleWheel);
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
       }
     };
   }, [isDetailOpen, showInfo, projects]);
