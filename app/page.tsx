@@ -248,6 +248,9 @@ export default function HomePage() {
     if (overlayRevealActive) return;
     setOverlayRevealActive(true);
     
+    // Set opacity to 0 initially on CSS content wrapper class
+    gsap.set(".overlay-content-node", { opacity: 0 });
+    
     // 1. Cover stage with black block elements
     gsap.fromTo(
       ".overlay-reveal-block",
@@ -258,29 +261,31 @@ export default function HomePage() {
         stagger: 0.08,
         ease: "power3.out",
         onComplete: () => {
-          // 2. Perform state swap when view is hidden
+          // 2. Perform state swap when view is covered (hidden)
           setActiveOverlay(type);
           setIsDetailOpen(false);
           setActiveProject(null);
           
-          // 3. Fade in text elements on new overlay
-          gsap.set(".overlay-content-node", { opacity: 0 });
-          
-          // 4. Slide blocks away to reveal the view
-          gsap.to(
-            ".overlay-reveal-block",
-            {
-              scaleY: 0,
-              transformOrigin: "top",
-              duration: 0.6,
-              stagger: 0.08,
-              ease: "power3.inOut",
-              onComplete: () => {
-                setOverlayRevealActive(false);
-                gsap.to(".overlay-content-node", { opacity: 1, duration: 0.35 });
+          // Wait for render so overlay markup exists in the DOM
+          requestAnimationFrame(() => {
+            gsap.set(".overlay-content-node", { opacity: 0 });
+            
+            // 3. Slide blocks away to reveal the view
+            gsap.to(
+              ".overlay-reveal-block",
+              {
+                scaleY: 0,
+                transformOrigin: "top",
+                duration: 0.6,
+                stagger: 0.08,
+                ease: "power3.inOut",
+                onComplete: () => {
+                  setOverlayRevealActive(false);
+                  gsap.to(".overlay-content-node", { opacity: 1, duration: 0.35 });
+                }
               }
-            }
-          );
+            );
+          });
         }
       }
     );
@@ -291,6 +296,7 @@ export default function HomePage() {
     if (overlayRevealActive) return;
     setOverlayRevealActive(true);
 
+    // 1. Cover with block elements
     gsap.fromTo(
       ".overlay-reveal-block",
       { scaleY: 0, transformOrigin: "bottom" },
@@ -300,9 +306,10 @@ export default function HomePage() {
         stagger: 0.08,
         ease: "power3.out",
         onComplete: () => {
+          // Reset view state while fully covered
           setActiveOverlay(null);
-          gsap.set(".overlay-content-node", { opacity: 0 });
           
+          // 2. Slide blocks away to show the background
           gsap.to(
             ".overlay-reveal-block",
             {
@@ -1146,7 +1153,7 @@ export default function HomePage() {
       {activeOverlay && (
         <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto">
           {/* Main Content Node */}
-          <div className="w-full min-h-screen p-6 md:p-16 flex flex-col justify-between relative z-10 overlay-content-node">
+          <div className="w-full min-h-screen p-6 md:p-16 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
             {/* Header row */}
             <div className="flex justify-between items-center pb-4 border-b border-black">
               <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
