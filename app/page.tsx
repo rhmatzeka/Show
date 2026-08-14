@@ -43,6 +43,7 @@ export default function HomePage() {
           // Set initial state on the next frame to guarantee CSS layout has resolved
           requestAnimationFrame(() => {
             gsap.set(".project-card-interactive-content", { opacity: 0 });
+            gsap.set(".project-card-reveal-block", { scaleY: 0, transformOrigin: "bottom" });
             
             // 1. Black blocks slide up to cover the card area
             gsap.fromTo(
