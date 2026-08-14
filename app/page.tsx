@@ -617,14 +617,16 @@ export default function HomePage() {
             return (
               <div
                 key={itemId}
-                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start project-card-interactive relative overflow-hidden"
+                ref={(el) => { projectRefs.current[itemId] = el; }}
+                onClick={() => project && openProject(project, itemId)}
+                className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start project-card-interactive relative overflow-hidden group cursor-pointer"
               >
-                <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+                <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed project-card-interactive-content">
                   ABCDEFGHIKL<br />
                   MNÑOPQRSTUV<br />
                   WXYZ
                 </div>
-                <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
+                <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4 project-card-interactive-content">
                   014
                 </div>
                 {/* Brutalist Block Reveal Cover */}
