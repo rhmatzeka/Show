@@ -13,7 +13,8 @@ export default function HomePage() {
   // Navigation / Detail overlay state
   const [activeProject, setActiveProject] = useState<ProjectData | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+  const [activeOverlay, setActiveOverlay] = useState<"about" | "contact" | null>(null);
+  const [overlayRevealActive, setOverlayRevealActive] = useState(false);
 
   // Main scrollable container reference
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -117,7 +118,7 @@ export default function HomePage() {
   // Seamless Infinite Vertical Scroll Loop handler
   const handleScroll = () => {
     const container = scrollContainerRef.current;
-    if (!container || isDetailOpen || showInfo) return;
+    if (!container || isDetailOpen || activeOverlay) return;
 
     const scrollTop = container.scrollTop;
     
@@ -153,7 +154,7 @@ export default function HomePage() {
 
     const updateScroll = () => {
       const container = scrollContainerRef.current;
-      if (container && !isDetailOpen && !showInfo) {
+      if (container && !isDetailOpen && !activeOverlay) {
         // Linear interpolation (lerp) for smooth dampening (higher divider = heavier scroll)
         const diff = targetScrollTop.current - currentScrollTop.current;
         if (Math.abs(diff) > 0.5) {
@@ -170,7 +171,7 @@ export default function HomePage() {
 
     // Wheel event listener to intercept raw wheel scroll and apply custom inertia target
     const handleWheel = (e: WheelEvent) => {
-      if (isDetailOpen || showInfo) return;
+      if (isDetailOpen || activeOverlay) return;
       e.preventDefault();
       // Accumulate wheel delta (multiply by 0.65 to make scroll heavier)
       targetScrollTop.current += e.deltaY * 0.65;
@@ -179,12 +180,12 @@ export default function HomePage() {
     // Touch event listener to bring weighted heavy scrolling to mobile screens
     let startY = 0;
     const handleTouchStart = (e: TouchEvent) => {
-      if (isDetailOpen || showInfo) return;
+      if (isDetailOpen || activeOverlay) return;
       startY = e.touches[0].pageY;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isDetailOpen || showInfo) return;
+      if (isDetailOpen || activeOverlay) return;
       e.preventDefault();
       const currentY = e.touches[0].pageY;
       // Calculate delta movement
@@ -212,11 +213,11 @@ export default function HomePage() {
         container.removeEventListener("touchmove", handleTouchMove);
       }
     };
-  }, [isDetailOpen, showInfo, projects]);
+  }, [isDetailOpen, activeOverlay, projects]);
 
   // Open project detail with FLIP transition
   const openProject = (project: ProjectData, itemId: string) => {
-    if (isDetailOpen || showInfo) return;
+    if (isDetailOpen || activeOverlay) return;
     
     const cardEl = projectRefs.current[itemId];
     if (cardEl) {
@@ -240,6 +241,88 @@ export default function HomePage() {
     
     // Update browser URL query path/state cleanly
     window.history.pushState(null, "", `/work/${project.slug}`);
+  };
+
+  // Open About/Contact reveal overlay
+  const handleOpenOverlayReveal = (type: "about" | "contact") => {
+    if (overlayRevealActive) return;
+    setOverlayRevealActive(true);
+    
+    // 1. Cover stage with black block elements
+    gsap.fromTo(
+      ".overlay-reveal-block",
+      { scaleY: 0, transformOrigin: "bottom" },
+      {
+        scaleY: 1,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: "power3.out",
+        onComplete: () => {
+          // 2. Perform state swap when view is hidden
+          setActiveOverlay(type);
+          setIsDetailOpen(false);
+          setActiveProject(null);
+          
+          // 3. Fade in text elements on new overlay
+          gsap.set(".overlay-content-node", { opacity: 0 });
+          
+          // 4. Slide blocks away to reveal the view
+          gsap.to(
+            ".overlay-reveal-block",
+            {
+              scaleY: 0,
+              transformOrigin: "top",
+              duration: 0.6,
+              stagger: 0.08,
+              ease: "power3.inOut",
+              onComplete: () => {
+                setOverlayRevealActive(false);
+                gsap.to(".overlay-content-node", { opacity: 1, duration: 0.35 });
+              }
+            }
+          );
+        }
+      }
+    );
+  };
+
+  // Close Reveal Overlay
+  const handleCloseOverlayReveal = () => {
+    if (overlayRevealActive) return;
+    setOverlayRevealActive(true);
+
+    gsap.fromTo(
+      ".overlay-reveal-block",
+      { scaleY: 0, transformOrigin: "bottom" },
+      {
+        scaleY: 1,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: "power3.out",
+        onComplete: () => {
+          setActiveOverlay(null);
+          gsap.set(".overlay-content-node", { opacity: 0 });
+          
+          gsap.to(
+            ".overlay-reveal-block",
+            {
+              scaleY: 0,
+              transformOrigin: "top",
+              duration: 0.6,
+              stagger: 0.08,
+              ease: "power3.inOut",
+              onComplete: () => {
+                setOverlayRevealActive(false);
+              }
+            }
+          );
+        }
+      }
+    );
+  };
+
+  const handleCloseOverlayDirect = () => {
+    setActiveOverlay(null);
   };
 
   // Execute FLIP Animation when opening
@@ -812,7 +895,7 @@ export default function HomePage() {
           <button 
             onClick={() => {
               setIsDetailOpen(false);
-              setShowInfo(false);
+              handleCloseOverlayDirect();
               const container = scrollContainerRef.current;
               if (container) {
                 const setElements = container.querySelectorAll(".portfolio-set-row");
@@ -828,28 +911,16 @@ export default function HomePage() {
             Home
           </button>
           <button 
-            onClick={() => setShowInfo(true)} 
-            className={`hover:underline hover:opacity-75 transition-opacity ${showInfo ? 'line-through' : ''}`}
+            onClick={() => handleOpenOverlayReveal("about")} 
+            className={`hover:underline hover:opacity-75 transition-opacity ${activeOverlay === 'about' ? 'line-through' : ''}`}
           >
-            Info
+            About
           </button>
           <button 
-            onClick={() => {
-              setIsDetailOpen(false);
-              setShowInfo(false);
-              const container = scrollContainerRef.current;
-              if (container) {
-                const setElements = container.querySelectorAll(".portfolio-set-row");
-                if (setElements.length >= 3) {
-                  const singleSetHeight = (setElements[1] as HTMLDivElement).offsetHeight;
-                  const spacerHeight = 112; // h-28 = 112px
-                  container.scrollTo({ top: spacerHeight + singleSetHeight + 200, behavior: "smooth" });
-                }
-              }
-            }} 
-            className="hover:underline hover:opacity-75 transition-opacity"
+            onClick={() => handleOpenOverlayReveal("contact")} 
+            className={`hover:underline hover:opacity-75 transition-opacity ${activeOverlay === 'contact' ? 'line-through' : ''}`}
           >
-            Work
+            Contact
           </button>
         </nav>
       </header>
@@ -1071,51 +1142,150 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* 5. Info Overlay Drawer */}
-      {showInfo && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-end">
-          <div className="w-full max-w-xl bg-white border-l border-black p-8 md:p-16 flex flex-col justify-between h-full select-text shadow-2xl">
-            <div className="flex justify-between items-center border-b border-black pb-6">
-              <span className="font-sans font-black text-xl uppercase tracking-tight">
-                Information
+      {/* 5. Custom Full Screen Reveal Overlays (About & Contact) */}
+      {activeOverlay && (
+        <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto">
+          {/* Main Content Node */}
+          <div className="w-full min-h-screen p-6 md:p-16 flex flex-col justify-between relative z-10 overlay-content-node">
+            {/* Header row */}
+            <div className="flex justify-between items-center pb-4 border-b border-black">
+              <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
+                Selection
               </span>
               <button 
-                onClick={() => setShowInfo(false)}
-                className="p-2 border border-black hover:bg-black hover:text-white transition-colors"
+                onClick={handleCloseOverlayReveal}
+                className="p-2 border border-black hover:bg-black hover:text-white transition-colors duration-200 focus:outline-none"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 md:w-5 h-5" />
               </button>
             </div>
 
-            <div className="my-auto space-y-8 py-8">
-              <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-medium">
-                Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust applications.
-              </p>
-              
-              <div className="space-y-4 font-sans text-sm">
-                <div className="grid grid-cols-3 border-b border-black/10 pb-2">
-                  <span className="font-bold uppercase text-black/60">Version</span>
-                  <span className="col-span-2 font-medium">MM26.1.1</span>
+            {activeOverlay === "about" ? (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-center">
+                {/* Left Column: Bio Details (7 Cols) */}
+                <div className="lg:col-span-7 space-y-8 pr-0 lg:pr-8">
+                  <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none">
+                    ABOUT@RAHMATEKA
+                  </h1>
+                  
+                  <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-medium">
+                    Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust, and beautiful applications.
+                  </p>
+                  
+                  <div className="space-y-4 pt-4 font-sans text-sm border-t border-black/10">
+                    <div className="grid grid-cols-3 pb-2 border-b border-black/5">
+                      <span className="font-bold uppercase text-black/60">Services</span>
+                      <span className="col-span-2 font-medium">Fullstack Web Development, Brand Identity, UI/UX Engineering, Database Accents</span>
+                    </div>
+                    <div className="grid grid-cols-3 pb-2 border-b border-black/5">
+                      <span className="font-bold uppercase text-black/60">Skills</span>
+                      <span className="col-span-2 font-medium">Next.js, React, Node.js, GSAP, Prisma, Tailwind CSS, SQL</span>
+                    </div>
+                    <div className="grid grid-cols-3 pb-2">
+                      <span className="font-bold uppercase text-black/60">Bio Focus</span>
+                      <span className="col-span-2 font-medium">Delivering clean, brutalist grids and high-performance interactive interfaces.</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-3 border-b border-black/10 pb-2">
-                  <span className="font-bold uppercase text-black/60">Services</span>
-                  <span className="col-span-2 font-medium">Brand Identity, Art Direction, Web Development, Fullstack Engineering</span>
-                </div>
-                <div className="grid grid-cols-3 border-b border-black/10 pb-2">
-                  <span className="font-bold uppercase text-black/60">Contact</span>
-                  <span className="col-span-2 font-medium">matsganz@gmail.com</span>
+
+                {/* Right Column: Profile Picture (5 Cols) */}
+                <div className="lg:col-span-5 flex justify-center items-center">
+                  <div className="w-full max-w-[360px] aspect-square relative border border-black bg-black/5 overflow-hidden shadow-sm">
+                    {/* Render custom upload or fallback */}
+                    {projects.find(p => p.slug === "symbol-card")?.images?.length ? (
+                      <Image
+                        src={projects.find(p => p.slug === "symbol-card")?.images?.[0]?.url || ""}
+                        alt="Rahmat Eka Profile Picture"
+                        fill
+                        className="object-cover grayscale contrast-110"
+                        sizes="(max-width: 768px) 100vw, 360px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col justify-center items-center p-6 text-center">
+                        <svg className="w-16 h-16 text-black/40 mb-3" viewBox="0 0 100 100" fill="currentColor">
+                          <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
+                          <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
+                        </svg>
+                        <span className="font-sans font-bold text-xs uppercase text-black/40 tracking-wider">
+                          Upload profile photo on Admin (Symbol Card cover image)
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="max-w-xl mx-auto w-full my-auto py-12 space-y-8">
+                <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-center">
+                  CONTACT@RAHMATEKA
+                </h1>
 
-            <div className="border-t border-black pt-6">
-              <button
-                onClick={() => setShowInfo(false)}
-                className="w-full py-4 border border-black font-sans font-bold text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-colors"
+                <p className="font-sans text-base md:text-lg leading-relaxed text-center text-black/80">
+                  Feel free to reach out. Select any coordinate below to open a direct channel of communication.
+                </p>
+
+                <div className="space-y-4 font-sans text-sm md:text-base pt-6 border-t border-black">
+                  <a 
+                    href="mailto:matsganz@gmail.com"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                  >
+                    <span className="font-bold uppercase">Email</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">matsganz@gmail.com</span>
+                  </a>
+
+                  <a 
+                    href="https://instagram.com/rhmat.dev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                  >
+                    <span className="font-bold uppercase">Instagram</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">@rhmat.dev</span>
+                  </a>
+
+                  <a 
+                    href="https://github.com/rhmatzeka"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                  >
+                    <span className="font-bold uppercase">GitHub</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">@rhmatzeka</span>
+                  </a>
+
+                  <a 
+                    href="https://t.me/luwakwhitecofeee"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                  >
+                    <span className="font-bold uppercase">Telegram</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">@luwakwhitecofeee</span>
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Footer row */}
+            <div className="flex justify-between items-center pt-4 border-t border-black">
+              <span className="font-sans font-bold text-[10px] md:text-xs uppercase tracking-wider text-black/60">
+                MM26.1.1 — © RAHMAT EKA
+              </span>
+              <button 
+                onClick={handleCloseOverlayReveal}
+                className="py-2.5 px-6 border border-black hover:bg-black hover:text-white font-sans font-bold text-xs uppercase tracking-widest transition-colors duration-200"
               >
-                Close Info
+                Close View
               </button>
             </div>
+          </div>
+
+          {/* Reveal blocks overlay wrapper */}
+          <div className="absolute inset-0 z-20 flex pointer-events-none">
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
           </div>
         </div>
       )}
