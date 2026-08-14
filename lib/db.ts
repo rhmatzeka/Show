@@ -75,7 +75,7 @@ const DEFAULT_PROJECTS: ProjectData[] = [
     slug: "alphabet-card",
     category: "Typography & Display",
     year: "014",
-    description: "Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust applications.",
+    description: "Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity brutalist interfaces.",
     projectUrl: null,
     sortOrder: 3,
     images: []

@@ -89,7 +89,7 @@ export default function HomePage() {
       }
     }
     loadProjects();
-  }, []);
+  }, [projects.length]);
 
   // Position the scroll container to the middle set once loading is complete
   useEffect(() => {
@@ -969,7 +969,7 @@ export default function HomePage() {
 
         {/* Stationary bio text block */}
         <div className="absolute right-6 md:right-16 top-[55vh] max-w-[240px] md:max-w-xs font-sans font-bold text-[10px] md:text-xs leading-relaxed text-black select-text pointer-events-auto">
-          {projects.find(p => p.slug === "alphabet-card")?.description || "Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust applications."}
+          {projects.find(p => p.slug === "alphabet-card")?.description || "Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity brutalist interfaces."}
         </div>
 
         {/* Copyright notice in background */}
@@ -1176,21 +1176,21 @@ export default function HomePage() {
                   </h1>
                   
                   <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-medium">
-                    Rahmat Eka is a designer and web developer specializing in brand identity, custom typefaces, and full-stack web experiences, building fast, robust, and beautiful applications.
+                    Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity interactive interfaces.
                   </p>
                   
                   <div className="space-y-4 pt-4 font-sans text-sm border-t border-black/10">
                     <div className="grid grid-cols-3 pb-2 border-b border-black/5">
                       <span className="font-bold uppercase text-black/60">Services</span>
-                      <span className="col-span-2 font-medium">Fullstack Web Development, Brand Identity, UI/UX Engineering, Database Accents</span>
+                      <span className="col-span-2 font-medium">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
                     </div>
                     <div className="grid grid-cols-3 pb-2 border-b border-black/5">
                       <span className="font-bold uppercase text-black/60">Skills</span>
-                      <span className="col-span-2 font-medium">Next.js, React, Node.js, GSAP, Prisma, Tailwind CSS, SQL</span>
+                      <span className="col-span-2 font-medium">Next.js, Solidity, React, GSAP, Tailwind CSS, Node.js, Web3.js / Ethers.js</span>
                     </div>
                     <div className="grid grid-cols-3 pb-2">
                       <span className="font-bold uppercase text-black/60">Bio Focus</span>
-                      <span className="col-span-2 font-medium">Delivering clean, brutalist grids and high-performance interactive interfaces.</span>
+                      <span className="col-span-2 font-medium">Crafting secure dApps, stark grids, and high-performance Web3 solutions.</span>
                     </div>
                   </div>
                 </div>
