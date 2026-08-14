@@ -89,7 +89,7 @@ export default function HomePage() {
       }
     }
     loadProjects();
-  }, [projects.length]);
+  }, []);
 
   // Position the scroll container to the middle set once loading is complete
   useEffect(() => {
@@ -518,10 +518,10 @@ export default function HomePage() {
                 key={itemId}
                 ref={(el) => { projectRefs.current[itemId] = el; }}
                 onClick={() => project && openProject(project, itemId)}
-                className="w-full aspect-square bg-[#FFFFFF] p-6 flex flex-col justify-center items-center relative select-none project-card-interactive overflow-hidden"
+                className="w-full aspect-square bg-[#FFFFFF] p-6 flex flex-col justify-center items-center relative select-none project-card-interactive overflow-hidden group cursor-pointer"
               >
                 {/* The brand icon: a symmetric three-pronged leaf/sprout symbol */}
-                <div className="project-card-interactive-content flex flex-col justify-center items-center w-full h-full">
+                <div className={`project-card-interactive-content flex flex-col justify-center items-center w-full h-full transition-opacity duration-200 ${isHidden ? "opacity-0" : "opacity-100"}`}>
                   <svg className="w-16 h-16 text-black" viewBox="0 0 100 100" fill="currentColor">
                     <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
                     <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
@@ -711,13 +711,15 @@ export default function HomePage() {
                 onClick={() => project && openProject(project, itemId)}
                 className="w-full aspect-[3/4] bg-[#000000] p-6 flex flex-col justify-between items-start project-card-interactive relative overflow-hidden group cursor-pointer"
               >
-                <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed project-card-interactive-content">
-                  ABCDEFGHIKL<br />
-                  MNÑOPQRSTUV<br />
-                  WXYZ
-                </div>
-                <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4 project-card-interactive-content">
-                  014
+                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
+                  <div className="font-display font-black text-lg md:text-2xl tracking-[0.2em] text-white uppercase leading-[1.2] break-all select-text font-stretch-ultra-condensed">
+                    ABCDEFGHIKL<br />
+                    MNÑOPQRSTUV<br />
+                    WXYZ
+                  </div>
+                  <div className="text-[40px] md:text-[60px] font-display font-black text-white leading-none mt-4">
+                    014
+                  </div>
                 </div>
                 {/* Brutalist Block Reveal Cover */}
                 <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
