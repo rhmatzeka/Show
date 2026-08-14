@@ -1156,7 +1156,7 @@ export default function HomePage() {
 
       {/* 5. Custom Full Screen Reveal Overlays (About & Contact) */}
       {activeOverlay && (
-        <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto w-screen h-screen">
           {/* Main Content Node */}
           <div className="w-full min-h-screen p-6 md:p-12 pb-20 md:pb-12 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
             {/* Header row */}
@@ -1293,11 +1293,11 @@ export default function HomePage() {
           </div>
 
           {/* Reveal blocks overlay wrapper */}
-          <div className="absolute inset-0 z-20 flex pointer-events-none w-full h-full min-h-screen">
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
+          <div className="fixed inset-0 z-20 flex pointer-events-none w-screen h-screen">
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-[120vh]"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-[120vh]"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-[120vh]"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-[120vh]"></div>
           </div>
         </div>
       )}
