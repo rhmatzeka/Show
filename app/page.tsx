@@ -1158,7 +1158,7 @@ export default function HomePage() {
       {activeOverlay && (
         <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto">
           {/* Main Content Node */}
-          <div className="w-full min-h-screen p-6 md:p-16 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
+          <div className="w-full min-h-screen p-6 md:p-12 pb-20 md:pb-12 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
             {/* Header row */}
             <div className="flex justify-between items-center pb-4 border-b border-black">
               <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
@@ -1175,16 +1175,16 @@ export default function HomePage() {
             {activeOverlay === "about" ? (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-center">
                 {/* Left Column: Bio Details (7 Cols) */}
-                <div className="lg:col-span-7 space-y-8 pr-0 lg:pr-8">
-                  <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none">
+                <div className="lg:col-span-7 space-y-6 pr-0 lg:pr-8">
+                  <h1 className="text-3xl md:text-4xl font-black font-display uppercase tracking-tight leading-none">
                     ABOUT@RAHMATEKA
                   </h1>
                   
-                  <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-medium">
+                  <p className="font-sans text-base md:text-lg leading-relaxed text-black font-medium">
                     Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity interactive interfaces.
                   </p>
                   
-                  <div className="space-y-4 pt-4 font-sans text-sm border-t border-black/10">
+                  <div className="space-y-3 pt-4 font-sans text-xs md:text-sm border-t border-black/10">
                     <div className="grid grid-cols-3 pb-2 border-b border-black/5">
                       <span className="font-bold uppercase text-black/60">Services</span>
                       <span className="col-span-2 font-medium">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
@@ -1202,7 +1202,7 @@ export default function HomePage() {
 
                 {/* Right Column: Profile Picture (5 Cols) */}
                 <div className="lg:col-span-5 flex justify-center items-center">
-                  <div className="w-full max-w-[360px] aspect-square relative border border-black bg-black/5 overflow-hidden shadow-sm">
+                  <div className="w-full max-w-[320px] aspect-square relative border border-black bg-black/5 overflow-hidden shadow-sm">
                     {/* Render custom upload or fallback */}
                     {projects.find(p => p.slug === "symbol-card")?.images?.length ? (
                       <Image
@@ -1210,7 +1210,7 @@ export default function HomePage() {
                         alt="Rahmat Eka Profile Picture"
                         fill
                         className="object-cover grayscale contrast-110"
-                        sizes="(max-width: 768px) 100vw, 360px"
+                        sizes="(max-width: 768px) 100vw, 320px"
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col justify-center items-center p-6 text-center">
@@ -1218,7 +1218,7 @@ export default function HomePage() {
                           <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
                           <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
                         </svg>
-                        <span className="font-sans font-bold text-xs uppercase text-black/40 tracking-wider">
+                        <span className="font-sans font-bold text-[10px] uppercase text-black/40 tracking-wider">
                           Upload profile photo on Admin (Symbol Card cover image)
                         </span>
                       </div>
@@ -1227,52 +1227,52 @@ export default function HomePage() {
                 </div>
               </div>
             ) : (
-              <div className="max-w-xl mx-auto w-full my-auto py-12 space-y-8">
-                <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-center">
+              <div className="max-w-md mx-auto w-full my-auto py-12 space-y-6">
+                <h1 className="text-3xl md:text-4xl font-black font-display uppercase tracking-tight leading-none text-center">
                   CONTACT@RAHMATEKA
                 </h1>
 
-                <p className="font-sans text-base md:text-lg leading-relaxed text-center text-black/80">
+                <p className="font-sans text-sm md:text-base leading-relaxed text-center text-black/80">
                   Feel free to reach out. Select any coordinate below to open a direct channel of communication.
                 </p>
 
-                <div className="space-y-4 font-sans text-sm md:text-base pt-6 border-t border-black">
+                <div className="space-y-3 font-sans text-xs md:text-sm pt-6 border-t border-black">
                   <a 
                     href="mailto:matsganz@gmail.com"
-                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">Email</span>
-                    <span className="font-medium font-mono text-xs md:text-sm">matsganz@gmail.com</span>
+                    <span className="font-medium font-mono text-xs">matsganz@gmail.com</span>
                   </a>
 
                   <a 
                     href="https://instagram.com/rhmat.dev"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">Instagram</span>
-                    <span className="font-medium font-mono text-xs md:text-sm">@rhmat.dev</span>
+                    <span className="font-medium font-mono text-xs">@rhmat.dev</span>
                   </a>
 
                   <a 
                     href="https://github.com/rhmatzeka"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">GitHub</span>
-                    <span className="font-medium font-mono text-xs md:text-sm">@rhmatzeka</span>
+                    <span className="font-medium font-mono text-xs">@rhmatzeka</span>
                   </a>
 
                   <a 
                     href="https://t.me/luwakwhitecofeee"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                    className="flex justify-between items-center p-3 border border-black hover:bg-black hover:text-white transition-colors duration-200"
                   >
                     <span className="font-bold uppercase">Telegram</span>
-                    <span className="font-medium font-mono text-xs md:text-sm">@luwakwhitecofeee</span>
+                    <span className="font-medium font-mono text-xs">@luwakwhitecofeee</span>
                   </a>
                 </div>
               </div>
@@ -1280,12 +1280,12 @@ export default function HomePage() {
 
             {/* Footer row */}
             <div className="flex justify-between items-center pt-4 border-t border-black">
-              <span className="font-sans font-bold text-[10px] md:text-xs uppercase tracking-wider text-black/60">
+              <span className="font-sans font-bold text-[9px] md:text-xs uppercase tracking-wider text-black/60">
                 MM26.1.1 — © RAHMAT EKA
               </span>
               <button 
                 onClick={handleCloseOverlayReveal}
-                className="py-2.5 px-6 border border-black hover:bg-black hover:text-white font-sans font-bold text-xs uppercase tracking-widest transition-colors duration-200"
+                className="py-2 px-5 border border-black hover:bg-black hover:text-white font-sans font-bold text-[10px] uppercase tracking-widest transition-colors duration-200"
               >
                 Close View
               </button>
@@ -1293,11 +1293,11 @@ export default function HomePage() {
           </div>
 
           {/* Reveal blocks overlay wrapper */}
-          <div className="absolute inset-0 z-20 flex pointer-events-none">
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
-            <div className="flex-1 bg-black origin-bottom overlay-reveal-block"></div>
+          <div className="absolute inset-0 z-20 flex pointer-events-none w-full h-full min-h-screen">
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
+            <div className="flex-1 bg-black origin-bottom overlay-reveal-block h-full"></div>
           </div>
         </div>
       )}
