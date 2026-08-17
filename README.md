@@ -1,6 +1,6 @@
 # Rahmat Eka - Portfolio Website
 
-An interactive Swiss Editorial portfolio website built using Next.js, GSAP, Tailwind CSS, Prisma, and PostgreSQL fallback database structure. Featuring infinite seamless vertical scrolling, brutalist typography grid designs, custom transition effects, and a simple administrative CMS
+An interactive Swiss Editorial portfolio website built using Next.js, GSAP, Tailwind CSS, Prisma, and PostgreSQL fallback database structure. Featuring infinite seamless vertical scrolling, brutalist typography grid designs, custom transition effects, and a simple administrative CMS.
 
 ## Features
 
