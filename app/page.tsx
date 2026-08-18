@@ -485,34 +485,8 @@ export default function HomePage() {
           {/* Item 1: Symbol Card */}
           {(() => {
             const project = projects.find(p => p.slug === "symbol-card");
-            const coverImg = project?.images?.find(img => img.isCover) || project?.images?.[0];
             const itemId = `item-symbol-logo-${setId}`;
             const isHidden = hiddenCardId === itemId;
-
-            if (project && coverImg) {
-              return (
-                <div
-                  key={itemId}
-                  ref={(el) => { projectRefs.current[itemId] = el; }}
-                  onClick={() => openProject(project, itemId)}
-                  className="bg-white group cursor-pointer overflow-hidden project-card-interactive shadow-sm transition-colors w-full aspect-square relative"
-                >
-                <div className={`w-full h-full relative flex flex-col justify-between transition-opacity duration-200 project-card-interactive-content ${isHidden ? "opacity-0" : "opacity-100"}`}>
-                  <div className="w-full h-full relative overflow-hidden bg-black/5 flip-source-el">
-                    <Image
-                      src={coverImg.url}
-                      alt={project.title}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 300px"
-                      className="object-cover grayscale contrast-115 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                    />
-                  </div>
-                </div>
-                {/* Brutalist Block Reveal Cover */}
-                <div className="absolute inset-0 bg-[#000000] z-20 origin-bottom project-card-reveal-block"></div>
-              </div>
-              );
-            }
 
             return (
               <div
@@ -1193,9 +1167,22 @@ export default function HomePage() {
                       <span className="font-bold uppercase text-black/60">Skills</span>
                       <span className="col-span-2 font-medium">Next.js, Solidity, React, GSAP, Tailwind CSS, Node.js, Web3.js / Ethers.js</span>
                     </div>
-                    <div className="grid grid-cols-3 pb-2">
+                    <div className="grid grid-cols-3 pb-2 border-b border-black/5">
                       <span className="font-bold uppercase text-black/60">Bio Focus</span>
                       <span className="col-span-2 font-medium">Crafting secure dApps, stark grids, and high-performance Web3 solutions.</span>
+                    </div>
+                    <div className="grid grid-cols-3 pb-2">
+                      <span className="font-bold uppercase text-black/60">Curriculum Vitae</span>
+                      <span className="col-span-2 font-medium">
+                        <a 
+                          href="https://cv.rahmateka.my.id/" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="underline hover:text-black/80 font-bold"
+                        >
+                          View my CV (cv.rahmateka.my.id)
+                        </a>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1263,6 +1250,16 @@ export default function HomePage() {
                   >
                     <span className="font-bold uppercase">GitHub</span>
                     <span className="font-medium font-mono text-xs md:text-sm">@rhmatzeka</span>
+                  </a>
+
+                  <a 
+                    href="https://www.linkedin.com/in/rahmatekasatria/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
+                  >
+                    <span className="font-bold uppercase">LinkedIn</span>
+                    <span className="font-medium font-mono text-xs md:text-sm">/in/rahmatekasatria/</span>
                   </a>
 
                   <a 
