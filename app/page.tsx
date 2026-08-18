@@ -1147,57 +1147,59 @@ export default function HomePage() {
             </div>
 
             {activeOverlay === "about" ? (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-stretch">
                 {/* Left Column: Bio Details (7 Cols) */}
-                <div className="lg:col-span-7 space-y-6 pr-0 lg:pr-8">
-                  <h1 className="text-3xl md:text-4xl font-black font-display uppercase tracking-tight leading-none">
-                    ABOUT@RAHMATEKA
-                  </h1>
+                <div className="lg:col-span-7 flex flex-col justify-between space-y-8 pr-0 lg:pr-8">
+                  <div className="space-y-6">
+                    <h1 className="text-4xl md:text-6xl font-black font-display uppercase tracking-tight leading-none text-black">
+                      ABOUT@RAHMATEKA
+                    </h1>
+                    
+                    <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-normal border-l-4 border-black pl-4 py-2 bg-black/5">
+                      Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity interactive interfaces.
+                    </p>
+                  </div>
                   
-                  <p className="font-sans text-base md:text-lg leading-relaxed text-black font-medium">
-                    Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity interactive interfaces.
-                  </p>
-                  
-                  <div className="space-y-3 pt-4 font-sans text-xs md:text-sm border-t border-black/10">
-                    <div className="grid grid-cols-3 pb-2 border-b border-black/5">
-                      <span className="font-bold uppercase text-black/60">Services</span>
-                      <span className="col-span-2 font-medium">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
+                  <div className="space-y-4 pt-6 font-sans text-sm border-t border-black">
+                    <div className="flex flex-col sm:flex-row justify-between py-2 border-b border-black/10 gap-2">
+                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Services</span>
+                      <span className="font-medium text-black">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
                     </div>
-                    <div className="grid grid-cols-3 pb-2 border-b border-black/5">
-                      <span className="font-bold uppercase text-black/60">Skills</span>
-                      <span className="col-span-2 font-medium">Next.js, Solidity, React, GSAP, Tailwind CSS, Node.js, Web3.js / Ethers.js</span>
+                    <div className="flex flex-col sm:flex-row justify-between py-2 border-b border-black/10 gap-2">
+                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Skills</span>
+                      <span className="font-medium text-black">Next.js, Solidity, React, GSAP, Tailwind CSS, Node.js, Web3.js / Ethers.js</span>
                     </div>
-                    <div className="grid grid-cols-3 pb-2 border-b border-black/5">
-                      <span className="font-bold uppercase text-black/60">Bio Focus</span>
-                      <span className="col-span-2 font-medium">Crafting secure dApps, stark grids, and high-performance Web3 solutions.</span>
+                    <div className="flex flex-col sm:flex-row justify-between py-2 border-b border-black/10 gap-2">
+                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Focus</span>
+                      <span className="font-medium text-black">Crafting secure dApps, stark grids, and high-performance Web3 solutions.</span>
                     </div>
-                    <div className="grid grid-cols-3 pb-2">
-                      <span className="font-bold uppercase text-black/60">Curriculum Vitae</span>
-                      <span className="col-span-2 font-medium">
+                    <div className="flex flex-col sm:flex-row justify-between items-center py-3 gap-2">
+                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Curriculum Vitae</span>
+                      <div className="w-full sm:w-auto">
                         <a 
                           href="https://cv.rahmateka.my.id/" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-block border border-black px-4 py-2 hover:bg-black hover:text-white font-bold uppercase tracking-wider transition-colors duration-200 text-xs text-center"
+                          className="inline-block border-2 border-black px-6 py-3 bg-black text-white hover:bg-white hover:text-black font-bold uppercase tracking-widest transition-colors duration-200 text-xs text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,0.25)] hover:shadow-none"
                         >
                           View my CV
                         </a>
-                      </span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Right Column: Profile Picture (5 Cols) */}
                 <div className="lg:col-span-5 flex justify-center items-center">
-                  <div className="w-full max-w-[320px] aspect-square relative border border-black bg-black/5 overflow-hidden shadow-sm">
+                  <div className="w-full max-w-[340px] aspect-square relative border-4 border-black bg-black/5 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                     {/* Render custom upload or fallback */}
                     {projects.find(p => p.slug === "symbol-card")?.images?.length ? (
                       <Image
                         src={projects.find(p => p.slug === "symbol-card")?.images?.[0]?.url || ""}
                         alt="Rahmat Eka Profile Picture"
                         fill
-                        className="object-cover grayscale contrast-110"
-                        sizes="(max-width: 768px) 100vw, 320px"
+                        className="object-cover grayscale contrast-110 hover:grayscale-0 transition-all duration-500 ease-in-out"
+                        sizes="(max-width: 768px) 100vw, 340px"
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col justify-center items-center p-6 text-center">
