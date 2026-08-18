@@ -1178,9 +1178,9 @@ export default function HomePage() {
                           href="https://cv.rahmateka.my.id/" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="underline hover:text-black/80 font-bold"
+                          className="inline-block border border-black px-4 py-2 hover:bg-black hover:text-white font-bold uppercase tracking-wider transition-colors duration-200 text-xs text-center"
                         >
-                          View my CV (cv.rahmateka.my.id)
+                          View my CV
                         </a>
                       </span>
                     </div>
