@@ -1130,9 +1130,9 @@ export default function HomePage() {
 
       {/* 5. Custom Full Screen Reveal Overlays (About & Contact) */}
       {activeOverlay && (
-        <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto w-screen h-screen">
+        <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto w-full h-screen">
           {/* Main Content Node */}
-          <div className="w-full min-h-screen p-6 md:p-12 pb-24 md:pb-16 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75">
+          <div className="w-full min-h-screen p-6 md:p-12 pb-24 md:pb-16 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75 max-w-full overflow-x-hidden">
             {/* Header row */}
             <div className="flex justify-between items-center pb-4 border-b border-black">
               <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
@@ -1147,20 +1147,46 @@ export default function HomePage() {
             </div>
 
             {activeOverlay === "about" ? (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-center">
+              <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12 my-auto py-12 items-center w-full max-w-full">
+                {/* Profile Picture (Top on mobile, Right column on desktop) */}
+                <div className="order-first lg:order-last lg:col-span-5 flex justify-center items-center w-full">
+                  <div className="w-full max-w-[280px] md:max-w-[340px] aspect-square relative border-4 border-black bg-black/5 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                    {/* Render custom upload or fallback */}
+                    {projects.find(p => p.slug === "symbol-card")?.images?.length ? (
+                      <Image
+                        src={projects.find(p => p.slug === "symbol-card")?.images?.[0]?.url || ""}
+                        alt="Rahmat Eka Profile Picture"
+                        fill
+                        className="object-cover grayscale contrast-110 hover:grayscale-0 transition-all duration-500 ease-in-out"
+                        sizes="(max-width: 768px) 100vw, 340px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col justify-center items-center p-6 text-center">
+                        <svg className="w-16 h-16 text-black/40 mb-3" viewBox="0 0 100 100" fill="currentColor">
+                          <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
+                          <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
+                        </svg>
+                        <span className="font-sans font-bold text-[10px] uppercase text-black/40 tracking-wider">
+                          Upload profile photo on Admin (Symbol Card cover image)
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Left Column: Bio Details (7 Cols) */}
-                <div className="lg:col-span-7 space-y-8 pr-0 lg:pr-8">
+                <div className="lg:col-span-7 space-y-8 pr-0 lg:pr-8 w-full">
                   <div className="space-y-6">
-                    <h1 className="text-4xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-black">
+                    <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-black break-words">
                       ABOUT@RAHMATEKA
                     </h1>
                     
-                    <p className="font-sans text-base md:text-lg leading-relaxed text-black font-normal border-l-4 border-black pl-4 py-2 bg-black/5">
+                    <p className="font-sans text-base md:text-lg leading-relaxed text-black font-normal py-2">
                       Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity interactive interfaces.
                     </p>
                   </div>
                   
-                  <div className="space-y-4 pt-6 font-sans text-sm border-t border-black">
+                  <div className="space-y-4 pt-6 font-sans text-sm border-t border-black w-full">
                     <div className="grid grid-cols-1 sm:grid-cols-12 py-2.5 border-b border-black/10 gap-1 items-start">
                       <span className="font-bold uppercase text-black/50 sm:col-span-3">Services</span>
                       <span className="font-medium text-black sm:col-span-9">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
@@ -1186,32 +1212,6 @@ export default function HomePage() {
                         </a>
                       </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* Right Column: Profile Picture (5 Cols) */}
-                <div className="lg:col-span-5 flex justify-center items-center">
-                  <div className="w-full max-w-[340px] aspect-square relative border-4 border-black bg-black/5 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    {/* Render custom upload or fallback */}
-                    {projects.find(p => p.slug === "symbol-card")?.images?.length ? (
-                      <Image
-                        src={projects.find(p => p.slug === "symbol-card")?.images?.[0]?.url || ""}
-                        alt="Rahmat Eka Profile Picture"
-                        fill
-                        className="object-cover grayscale contrast-110 hover:grayscale-0 transition-all duration-500 ease-in-out"
-                        sizes="(max-width: 768px) 100vw, 340px"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col justify-center items-center p-6 text-center">
-                        <svg className="w-16 h-16 text-black/40 mb-3" viewBox="0 0 100 100" fill="currentColor">
-                          <path d="M50 50 C40 30, 25 25, 15 40 C30 45, 45 45, 50 50 Z" />
-                          <path d="M50 50 C60 30, 75 25, 85 40 C70 45, 55 45, 50 50 Z" />
-                        </svg>
-                        <span className="font-sans font-bold text-[10px] uppercase text-black/40 tracking-wider">
-                          Upload profile photo on Admin (Symbol Card cover image)
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
