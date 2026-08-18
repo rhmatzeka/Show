@@ -1147,40 +1147,40 @@ export default function HomePage() {
             </div>
 
             {activeOverlay === "about" ? (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 my-auto py-12 items-center">
                 {/* Left Column: Bio Details (7 Cols) */}
-                <div className="lg:col-span-7 flex flex-col justify-between space-y-8 pr-0 lg:pr-8">
+                <div className="lg:col-span-7 space-y-8 pr-0 lg:pr-8">
                   <div className="space-y-6">
-                    <h1 className="text-4xl md:text-6xl font-black font-display uppercase tracking-tight leading-none text-black">
+                    <h1 className="text-4xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-black">
                       ABOUT@RAHMATEKA
                     </h1>
                     
-                    <p className="font-sans text-lg md:text-xl leading-relaxed text-black font-normal border-l-4 border-black pl-4 py-2 bg-black/5">
+                    <p className="font-sans text-base md:text-lg leading-relaxed text-black font-normal border-l-4 border-black pl-4 py-2 bg-black/5">
                       Rahmat Eka is a fullstack web3 developer and UI/UX designer, specializing in building decentralized applications, smart contracts, and high-fidelity interactive interfaces.
                     </p>
                   </div>
                   
                   <div className="space-y-4 pt-6 font-sans text-sm border-t border-black">
-                    <div className="flex flex-col sm:flex-row justify-between py-2 border-b border-black/10 gap-2">
-                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Services</span>
-                      <span className="font-medium text-black">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-12 py-2.5 border-b border-black/10 gap-1 items-start">
+                      <span className="font-bold uppercase text-black/50 sm:col-span-3">Services</span>
+                      <span className="font-medium text-black sm:col-span-9">Web3 Development, Smart Contract Audits, UI/UX Design, Fullstack Engineering</span>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-between py-2 border-b border-black/10 gap-2">
-                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Skills</span>
-                      <span className="font-medium text-black">Next.js, Solidity, React, GSAP, Tailwind CSS, Node.js, Web3.js / Ethers.js</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-12 py-2.5 border-b border-black/10 gap-1 items-start">
+                      <span className="font-bold uppercase text-black/50 sm:col-span-3">Skills</span>
+                      <span className="font-medium text-black sm:col-span-9">Next.js, Solidity, React, GSAP, Tailwind CSS, Node.js, Web3.js / Ethers.js</span>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-between py-2 border-b border-black/10 gap-2">
-                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Focus</span>
-                      <span className="font-medium text-black">Crafting secure dApps, stark grids, and high-performance Web3 solutions.</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-12 py-2.5 border-b border-black/10 gap-1 items-start">
+                      <span className="font-bold uppercase text-black/50 sm:col-span-3">Focus</span>
+                      <span className="font-medium text-black sm:col-span-9">Crafting secure dApps, stark grids, and high-performance Web3 solutions.</span>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-between items-center py-3 gap-2">
-                      <span className="font-bold uppercase text-black/50 shrink-0 w-32">Curriculum Vitae</span>
-                      <div className="w-full sm:w-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-12 py-3 gap-2 items-center">
+                      <span className="font-bold uppercase text-black/50 sm:col-span-3">Curriculum Vitae</span>
+                      <div className="sm:col-span-9">
                         <a 
                           href="https://cv.rahmateka.my.id/" 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-block border-2 border-black px-6 py-3 bg-black text-white hover:bg-white hover:text-black font-bold uppercase tracking-widest transition-colors duration-200 text-xs text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,0.25)] hover:shadow-none"
+                          className="inline-block border-2 border-black px-6 py-2.5 bg-black text-white hover:bg-white hover:text-black font-bold uppercase tracking-widest transition-colors duration-200 text-xs text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                         >
                           View my CV
                         </a>
