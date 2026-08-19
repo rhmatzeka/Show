@@ -271,6 +271,12 @@ export default function HomePage() {
           requestAnimationFrame(() => {
             gsap.set(".overlay-content-node", { opacity: 0 });
             
+            // Auto scroll overlays back to top on open
+            const overlayContainers = document.querySelectorAll(".fixed.inset-0.z-50.flex.bg-white");
+            overlayContainers.forEach(container => {
+              container.scrollTop = 0;
+            });
+            
             // 3. Slide blocks away to reveal the view
             gsap.to(
               ".overlay-reveal-block",
@@ -1132,7 +1138,7 @@ export default function HomePage() {
       {activeOverlay && (
         <div className="fixed inset-0 z-50 flex bg-white select-text overflow-y-auto w-full h-screen">
           {/* Main Content Node */}
-          <div className="w-full min-h-screen p-6 md:p-12 pb-24 md:pb-16 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75 max-w-full overflow-x-hidden">
+          <div className="w-full min-h-screen p-6 md:p-12 pb-32 md:pb-20 flex flex-col justify-between relative z-10 overlay-content-node transition-opacity duration-75 max-w-full overflow-x-hidden">
             {/* Header row */}
             <div className="flex justify-between items-center pb-4 border-b border-black">
               <span className="font-sans font-bold uppercase tracking-wider text-xs md:text-sm">
@@ -1149,7 +1155,7 @@ export default function HomePage() {
             {activeOverlay === "about" ? (
               <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12 my-auto py-12 items-center w-full max-w-full">
                 {/* Profile Picture (Top on mobile, Right column on desktop) */}
-                <div className="order-first lg:order-last lg:col-span-5 flex justify-center items-center w-full">
+                <div className="order-first lg:order-last lg:col-span-5 flex justify-center items-center w-full mb-4 lg:mb-0">
                   <div className="w-full max-w-[280px] md:max-w-[340px] aspect-square relative border-4 border-black bg-black/5 overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                     {/* Render custom upload or fallback */}
                     {projects.find(p => p.slug === "symbol-card")?.images?.length ? (
@@ -1216,16 +1222,16 @@ export default function HomePage() {
                 </div>
               </div>
             ) : (
-              <div className="max-w-xl mx-auto w-full my-auto py-12 space-y-6">
-                <h1 className="text-3xl md:text-4xl font-black font-display uppercase tracking-tight leading-none text-center">
+              <div className="max-w-xl mx-auto w-full my-auto py-12 space-y-6 flex flex-col justify-center items-center">
+                <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-center text-black break-words w-full">
                   CONTACT@RAHMATEKA
                 </h1>
 
-                <p className="font-sans text-sm md:text-base leading-relaxed text-center text-black/80">
+                <p className="font-sans text-sm md:text-base leading-relaxed text-center text-black/80 max-w-md">
                   Feel free to reach out. Select any coordinate below to open a direct channel of communication.
                 </p>
 
-                <div className="space-y-3 font-sans text-xs md:text-sm pt-6 border-t border-black">
+                <div className="space-y-3 font-sans text-xs md:text-sm pt-6 border-t border-black w-full">
                   <a 
                     href="mailto:matsganz@gmail.com"
                     className="flex justify-between items-center p-4 border border-black hover:bg-black hover:text-white transition-colors duration-200"
@@ -1278,7 +1284,7 @@ export default function HomePage() {
             )}
 
             {/* Footer row */}
-            <div className="flex justify-between items-center pt-4 border-t border-black mt-8 md:mt-0">
+            <div className="flex justify-between items-center pt-4 border-t border-black mt-8 md:mt-0 pb-8 md:pb-0">
               <span className="font-sans font-bold text-[9px] md:text-xs uppercase tracking-wider text-black/60">
                 MM26.1.1 — © RAHMAT EKA
               </span>
