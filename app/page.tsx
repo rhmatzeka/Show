@@ -1183,7 +1183,7 @@ export default function HomePage() {
                 {/* Left Column: Bio Details (7 Cols) */}
                 <div className="lg:col-span-7 space-y-8 pr-0 lg:pr-8 w-full">
                   <div className="space-y-6">
-                    <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-black break-words">
+                    <h1 className="text-3xl md:text-5xl font-black font-sans uppercase tracking-tight leading-none text-black break-words">
                       ABOUT@RAHMATEKA
                     </h1>
                     
@@ -1223,7 +1223,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="max-w-xl mx-auto w-full my-auto py-12 space-y-6 flex flex-col justify-center items-center">
-                <h1 className="text-3xl md:text-5xl font-black font-display uppercase tracking-tight leading-none text-center text-black break-words w-full">
+                <h1 className="text-3xl md:text-5xl font-black font-sans uppercase tracking-tight leading-none text-center text-black break-words w-full">
                   CONTACT@RAHMATEKA
                 </h1>
 
