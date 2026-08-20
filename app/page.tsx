@@ -35,7 +35,7 @@ export default function HomePage() {
   useEffect(() => {
     async function loadProjects() {
       try {
-        const res = await fetch("/api/projects");
+        const res = await fetch(`/api/projects?t=${Date.now()}`);
         const data = await res.json();
         if (data.projects) {
           setProjects(data.projects);

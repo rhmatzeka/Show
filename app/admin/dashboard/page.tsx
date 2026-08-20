@@ -67,7 +67,7 @@ export default function AdminDashboardPage() {
   async function loadProjects() {
     try {
       setLoadingProjects(true);
-      const res = await fetch("/api/projects");
+      const res = await fetch(`/api/projects?t=${Date.now()}`);
       const data = await res.json();
       if (data.projects) {
         setProjects(data.projects);
