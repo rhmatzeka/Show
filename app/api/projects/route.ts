@@ -4,6 +4,8 @@ import { getProjects, createProject, deleteProject, updateProject } from "@/lib/
 import fs from "fs";
 import path from "path";
 
+export const dynamic = "force-dynamic";
+
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-brutalist-key-change-me";
 
 // Verify admin helper
