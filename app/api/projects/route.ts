@@ -30,6 +30,28 @@ export async function GET() {
   }
 }
 
+// Helper function to save uploaded image directly to public/uploads/
+async function saveUploadedFile(file: File): Promise<string> {
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  const ext = path.extname(file.name) || ".jpg";
+  const cleanName = path
+    .basename(file.name, ext)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "-");
+  const fileName = `${Date.now()}-${cleanName}${ext}`;
+  const filePath = path.join(uploadsDir, fileName);
+
+  fs.writeFileSync(filePath, buffer);
+  return `/uploads/${fileName}`;
+}
+
 export async function POST(request: NextRequest) {
   if (!verifyAdmin(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -58,15 +80,11 @@ export async function POST(request: NextRequest) {
 
       if (file && file.size > 0) {
         try {
-          const bytes = await file.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          const base64Data = buffer.toString("base64");
-          const mimeType = file.type || "image/jpeg";
-          imageUrl = `data:${mimeType};base64,${base64Data}`;
+          imageUrl = await saveUploadedFile(file);
         } catch (uploadError) {
-          console.error("Base64 conversion failed:", uploadError);
+          console.error("File upload save failed:", uploadError);
           return NextResponse.json({ 
-            error: "Failed to process uploaded file." 
+            error: "Failed to process and save uploaded file." 
           }, { status: 400 });
         }
       } else {
@@ -146,14 +164,10 @@ export async function PUT(request: NextRequest) {
 
       if (file && file.size > 0) {
         try {
-          const bytes = await file.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          const base64Data = buffer.toString("base64");
-          const mimeType = file.type || "image/jpeg";
-          imageUrl = `data:${mimeType};base64,${base64Data}`;
+          imageUrl = await saveUploadedFile(file);
         } catch (uploadError) {
-          console.error("Base64 conversion failed:", uploadError);
-          return NextResponse.json({ error: "Failed to process uploaded file." }, { status: 400 });
+          console.error("File upload save failed:", uploadError);
+          return NextResponse.json({ error: "Failed to process and save uploaded file." }, { status: 400 });
         }
       } else {
         imageUrl = directUrl;
