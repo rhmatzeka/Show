@@ -2,6 +2,8 @@
 
 An interactive Swiss Editorial portfolio website built using Next.js, GSAP, Tailwind CSS, Prisma, and PostgreSQL fallback database structure. Featuring infinite seamless vertical scrolling, brutalist typography grid designs, custom transition effects, and a simple administrative CMS
 
+![Swiss editorial portfolio with the infinite scrolling grid](docs/images/preview.png)
+
 ## Features
 
 - **Infinite Scrolling Canvas:** Seamless, looped vertical scroll layout.
